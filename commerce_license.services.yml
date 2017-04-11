@@ -1,0 +1,10 @@
+services:
+  commerce_license.referenceable_plugin_types_subscriber:
+    class: Drupal\commerce_license\EventSubscriber\ReferenceablePluginTypesSubscriber
+    arguments: []
+    tags:
+      - { name: event_subscriber }
+  plugin.manager.commerce_license_type:
+    class: Drupal\commerce_license\LicenseTypeManager
+    parent: default_plugin_manager
+

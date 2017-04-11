@@ -1,0 +1,8 @@
+
+# Commerce License menu items definition
+entity.commerce_license.collection:
+  title: 'Licenses'
+  route_name: entity.commerce_license.collection
+  description: 'List all licenses'
+  parent: commerce.admin_commerce
+

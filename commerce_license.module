@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Contains commerce_license.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function commerce_license_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the commerce_license module.
+    case 'help.page.commerce_license':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('License entities and product behavior') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_license_theme() {
+  $theme = [];
+  $theme['commerce_license'] = array(
+    'render element' => 'elements',
+    'file' => 'commerce_license.page.inc',
+    'template' => 'commerce_license',
+  );
+  $theme['commerce_license_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'commerce_license.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function commerce_license_theme_suggestions_commerce_license(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#commerce_license'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'commerce_license__' . $sanitized_view_mode;
+  $suggestions[] = 'commerce_license__' . $entity->bundle();
+  $suggestions[] = 'commerce_license__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'commerce_license__' . $entity->id();
+  $suggestions[] = 'commerce_license__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}

@@ -1,0 +1,9 @@
+name: Commerce License
+type: module
+description: License entities and product behavior
+core: 8.x
+package: Commerce
+dependencies:
+  - commerce
+  - commerce_checkout
+  - commerce_product

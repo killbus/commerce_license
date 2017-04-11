@@ -1,0 +1,5 @@
+entity.commerce_license.add_form:
+  route_name: entity.commerce_license.add_form
+  title: 'Add Commerce License'
+  appears_on:
+    - entity.commerce_license.collection
