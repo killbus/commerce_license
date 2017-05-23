@@ -3,11 +3,8 @@ create licenses:
 
 administer licenses:
   title: 'Administer License entities'
-  description: 'Allow to access the administration form to configure License entities.'
+  description: 'Allowed to manage license entities in administrative mode.'
   restrict access: true
-
-delete own licenses:
-  title: 'Delete licenses'
 
 edit own licenses:
   title: 'Edit licenses'
@@ -18,13 +15,3 @@ view own licenses:
 view all licenses:
   title: 'View all licenses'
 
-view all license revisions:
-  title: 'View all license revisions'
-
-revert all license revisions:
-  title: 'Revert all license revisions'
-  description: 'Role requires permission <em>view all license revisions</em> and <em>edit rights</em> for licenses in question or <em>administer licenses</em>.'
-
-delete all license revisions:
-  title: 'Delete all license revisions'
-  description: 'Role requires permission to <em>view all license revisions</em> and <em>delete rights</em> for licenses in question or <em>administer licenses</em>.'

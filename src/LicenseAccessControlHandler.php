@@ -2,10 +2,10 @@
 
 namespace Drupal\commerce_license;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Access\AccessResult;
 
 /**
  * Access controller for the License entity.
@@ -21,16 +21,13 @@ class LicenseAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\commerce_license\Entity\LicenseInterface $entity */
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished license entities');
-        }
-        return AccessResult::allowedIfHasPermission($account, 'view published license entities');
+        return AccessResult::allowedIfHasPermission($account, 'view all licenses');
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit license entities');
+        return AccessResult::allowedIfHasPermission($account, 'administer licenses');
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete license entities');
+        return AccessResult::allowedIfHasPermission($account, 'administer licenses');
     }
 
     // Unknown operation, no opinion.
@@ -41,7 +38,9 @@ class LicenseAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add license entities');
+    $access = AccessResult::allowedIfHasPermission($account, 'create licenses')
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'administer licenses'));
+    return $access;
   }
 
 }

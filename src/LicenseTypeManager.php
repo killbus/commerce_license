@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\commerce_license;
+
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -9,7 +10,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 /**
  * Manages discovery and instantiation of payment method type plugins.
  *
- * @see \Drupal\commerce_payment\Annotation\CommerceLicenseType
+ * @see \Drupal\commerce_license\Annotation\CommerceLicenseType
  * @see plugin_api
  */
 class LicenseTypeManager extends DefaultPluginManager {
@@ -44,12 +45,11 @@ class LicenseTypeManager extends DefaultPluginManager {
   public function processDefinition(&$definition, $plugin_id) {
     parent::processDefinition($definition, $plugin_id);
 
-    // @TODO: Figure this out below, not sure what it is intended for.
-    // foreach (['id', 'label', 'create_label'] as $required_property) {
-    //   if (empty($definition[$required_property])) {
-    //     throw new PluginException(sprintf('The payment method type %s must define the %s property.', $plugin_id, $required_property));
-    //   }
-    // }
+    foreach (['id', 'label'] as $required_property) {
+      if (empty($definition[$required_property])) {
+        throw new PluginException(sprintf('The license type %s must define the %s property.', $plugin_id, $required_property));
+      }
+    }
   }
 
 }

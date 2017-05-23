@@ -5,15 +5,16 @@ namespace Drupal\commerce_license\Plugin\Commerce\LicenseType;
 use Drupal\commerce\BundleFieldDefinition;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
+
 /**
- * Provides the PayPal payment method type.
+ * Provides a license type which grants access to files.
  *
- * @CommercePaymentMethodType(
+ * @CommerceLicenseType(
  *   id = "file",
  *   label = @Translation("File"),
  * )
  */
-class LicenseTypeFile extends LicenseTypeBase {
+class File extends Base {
 
   /**
    * {@inheritdoc}
@@ -22,7 +23,7 @@ class LicenseTypeFile extends LicenseTypeBase {
     $args = [
       '@id' => $license->license_id,
     ];
-    return $this->t('PayPal account (@paypal_mail)', $args);
+    return $this->t('File license (@id)', $args);
   }
 
   /**
@@ -30,11 +31,7 @@ class LicenseTypeFile extends LicenseTypeBase {
    */
   public function buildFieldDefinitions() {
     $fields = parent::buildFieldDefinitions();
-
-    $fields['paypal_mail'] = BundleFieldDefinition::create('email')
-      ->setLabel(t('PayPal Email'))
-      ->setDescription(t('The email address associated with the PayPal account.'))
-      ->setRequired(TRUE);
+    // @TODO: File entity reference field here, multi-value.
 
     return $fields;
   }

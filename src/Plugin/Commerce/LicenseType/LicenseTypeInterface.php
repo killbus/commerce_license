@@ -27,6 +27,6 @@ interface LicenseTypeInterface extends BundlePluginInterface {
    * @return string
    *   The label.
    */
-  public function buildLabel(PaymentMethodInterface $payment_method);
+  public function buildLabel(LicenseInterface $payment_method);
 
 }

@@ -4,7 +4,7 @@ namespace Drupal\commerce_license\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\RevisionableContentEntityBase;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
@@ -17,6 +17,15 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "commerce_license",
  *   label = @Translation("License"),
+ *   label_collection = @Translation("Licenses"),
+ *   label_singular = @Translation("license"),
+ *   label_plural = @Translation("licenses"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count license",
+ *     plural = "@count licenses",
+ *   ),
+ *   bundle_label = @Translation("License type"),
+ *   bundle_plugin_type = "commerce_license_type",
  *   handlers = {
  *     "access" = "Drupal\commerce_license\LicenseAccessControlHandler",
  *     "list_builder" = "Drupal\commerce_license\LicenseListBuilder",
@@ -28,38 +37,31 @@ use Drupal\user\UserInterface;
  *       "edit" = "Drupal\commerce_license\Form\LicenseForm",
  *       "delete" = "Drupal\commerce_license\Form\LicenseDeleteForm",
  *     },
+ *     "views_data" = "Drupal\views\EntityViewsData",
  *     "route_provider" = {
  *       "default" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
  *     },
  *   },
  *   base_table = "commerce_license",
- *   revision_table = "commerce_license_revision",
- *   revision_data_table = "commerce_license_field_revision",
  *   admin_permission = "administer licenses",
+ *   fieldable = TRUE,
  *   entity_keys = {
  *     "id" = "license_id",
- *     "revision" = "revision_id",
  *     "bundle" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
- *     "langcode" = "langcode",
  *     "status" = "status",
  *   },
- *   bundle_label = @Translation("License type"),
- *   bundle_plugin_type = "commerce_license_type",
  *   links = {
  *     "canonical" = "/admin/commerce/licenses/{commerce_license}",
- *     "add-form" = "/admin/commerce/licenses/add",
+ *     "create-form" = "/admin/commerce/licenses/create",
  *     "edit-form" = "/admin/commerce/licenses/{commerce_license}/edit",
  *     "delete-form" = "/admin/commerce/licenses/{commerce_license}/delete",
- *     "version-history" = "/admin/commerce/licenses/{commerce_license}/revisions",
- *     "revision" = "/admin/commerce/licenses/{commerce_license}/revisions/{commerce_license_revision}/view",
- *     "revision_delete" = "/admin/commerce/licenses/{commerce_license}/revisions/{commerce_license_revision}/delete",
  *     "collection" = "/admin/commerce/licenses",
  *   },
  * )
  */
-class License extends RevisionableContentEntityBase implements LicenseInterface {
+class License extends ContentEntityBase implements LicenseInterface {
   use EntityChangedTrait;
 
   /**
@@ -85,12 +87,6 @@ class License extends RevisionableContentEntityBase implements LicenseInterface 
       if (!$translation->getOwner()) {
         $translation->setOwnerId(0);
       }
-    }
-
-    // If no revision author has been set explicitly, make the commerce_license owner the
-    // revision author.
-    if (!$this->getRevisionUser()) {
-      $this->setRevisionUserId($this->getOwnerId());
     }
   }
 
@@ -139,41 +135,12 @@ class License extends RevisionableContentEntityBase implements LicenseInterface 
     return $this;
   }
 
+
   /**
-   * {@inheritdoc}
-   */
+   *    * {@inheritdoc}
+   *       */
   public function setOwner(UserInterface $account) {
     $this->set('uid', $account->id());
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getRevisionCreationTime() {
-    return $this->get('revision_timestamp')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionCreationTime($timestamp) {
-    $this->set('revision_timestamp', $timestamp);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getRevisionUser() {
-    return $this->get('revision_uid')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionUserId($uid) {
-    $this->set('revision_uid', $uid);
     return $this;
   }
 
@@ -186,11 +153,9 @@ class License extends RevisionableContentEntityBase implements LicenseInterface 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('OWner'))
       ->setDescription(t('The user ID of the license owner.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\commerce_license\Entity\License::getCurrentUserId')
-      ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'author',
@@ -202,7 +167,6 @@ class License extends RevisionableContentEntityBase implements LicenseInterface 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the License is published.'))
-      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
 
     $fields['product'] = BaseFieldDefinition::create('entity_reference')
@@ -220,7 +184,6 @@ class License extends RevisionableContentEntityBase implements LicenseInterface 
         ],
       ])
       ->setDisplayConfigurable('form', TRUE)
-      ->setRevisionable(TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
@@ -264,28 +227,7 @@ class License extends RevisionableContentEntityBase implements LicenseInterface 
     $fields['autoexpire'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Automatic expiration'))
       ->setDescription(t('Whether or not the license will automatically expire.'))
-      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
-
-    $fields['revision_timestamp'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Revision timestamp'))
-      ->setDescription(t('The time that the current revision was created.'))
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Revision user ID'))
-      ->setDescription(t('The user ID of the author of the current revision.'))
-      ->setSetting('target_type', 'user')
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_translation_affected'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Revision translation affected'))
-      ->setDescription(t('Indicates if the last edit of a translation belongs to current revision.'))
-      ->setReadOnly(TRUE)
-      ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE);
 
     return $fields;
   }
