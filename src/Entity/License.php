@@ -33,7 +33,7 @@ use Drupal\user\UserInterface;
  *     "form" = {
  *       "default" = "Drupal\commerce_license\Form\LicenseForm",
  *       "checkout" = "Drupal\commerce_license\Form\LicenseCheckoutForm",
- *       "add" = "Drupal\commerce_license\Form\LicenseForm",
+ *       "create" = "Drupal\commerce_license\Form\LicenseCreateForm",
  *       "edit" = "Drupal\commerce_license\Form\LicenseForm",
  *       "delete" = "Drupal\commerce_license\Form\LicenseDeleteForm",
  *     },

@@ -4,18 +4,7 @@ entity.commerce_license.create_form:
     _form: '\Drupal\commerce_license\Form\LicenseCreateForm'
     _title: 'Create license'
   requirements:
-    _entity_create_access: 'commerce_license'
-
-entity.commerce_license.operation_form:
-  path: '/admin/commerce/licenses/{commerce_license}/{operation}'
-  defaults:
-    _entity_form: 'commerce_license.operation'
-  options:
-    parameters:
-      commerce_license:
-        type: 'entity:commerce_license'
-  requirements:
-    _commerce_license_operation_access: 'TRUE'
+    _permission: 'administer licenses'
 
 entity.commerce_license.collection:
   path: '/admin/commerce/licenses'
@@ -23,4 +12,4 @@ entity.commerce_license.collection:
     _entity_list: 'commerce_license'
     _title: 'Licenses'
   requirements:
-    _permission: 'administer licenses+view all licenses'
+    _permission: 'administer licenses'

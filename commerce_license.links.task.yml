@@ -3,7 +3,3 @@ commerce_license.settings_tab:
   route_name: commerce_license.settings
   title: 'Settings'
   base_route: commerce_license.settings
-
-entity.commerce_license.collection:
-  route_name: entity.commerce_license.user_collection
-  base_route: entity.user.canonical
