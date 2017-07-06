@@ -4,6 +4,7 @@ namespace Drupal\commerce_license\Plugin\CommerceEntityTrait;
 
 use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitInterface;
 use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitBase;
+use Drupal\commerce\BundleFieldDefinition;
 
 /**
  * @CommerceEntityTrait(
@@ -20,7 +21,7 @@ class PurchasableEntityLicensed extends EntityTraitBase {
   public function buildFieldDefinitions() {
     // Builds the field definitions.
     $fields = [];
-    $fields['license_type'] = BaseFieldDefinition::create('commerce_plugin_item:commerce_license_type')
+    $fields['license_type'] = BundleFieldDefinition::create('commerce_plugin_item:commerce_license_type')
       ->setLabel(t('License Type'))
       ->setCardinality(1)
       ->setRequired(FALSE)
