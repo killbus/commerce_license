@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\commerce_license\Plugin\CommerceEntityTrait;
+namespace Drupal\commerce_license\Plugin\Commerce\EntityTrait;
 
 use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitInterface;
 use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitBase;
