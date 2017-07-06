@@ -2,13 +2,15 @@
 
 namespace Drupal\commerce_license\Plugin\Commerce\LicenseType;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\commerce\BundlePluginInterface;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
 /**
  * Defines the interface for payment method types.
  */
-interface LicenseTypeInterface extends BundlePluginInterface {
+interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Gets the payment method type label.
