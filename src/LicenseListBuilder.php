@@ -4,8 +4,8 @@ namespace Drupal\commerce_license;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Defines a class to build a listing of License entities.
@@ -13,8 +13,6 @@ use Drupal\Core\Url;
  * @ingroup commerce_license
  */
 class LicenseListBuilder extends EntityListBuilder {
-
-  use LinkGeneratorTrait;
 
   /**
    * {@inheritdoc}
@@ -31,7 +29,7 @@ class LicenseListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\commerce_license\Entity\License */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
+    $row['name'] = Link::fromTextAndUrl(
       $entity->label(),
       new Url(
         'entity.commerce_license.edit_form', array(
