@@ -161,7 +161,7 @@ class LicenseCreateForm extends FormBase implements ContainerInjectionInterface 
 
 
     if ($step == 'license_type') {
-      $form = $this->buildLicenseTypeForm($form, $form_state, $account);
+      $form = $this->buildLicenseTypeForm($form, $form_state);
     }
     elseif ($step == 'license') {
       // DEPRECATED???
@@ -174,7 +174,7 @@ class LicenseCreateForm extends FormBase implements ContainerInjectionInterface 
         ->create($values);
       $this->setEntity($entity);
 
-      $form = $this->buildLicenseForm($form, $form_state, $account);
+      $form = $this->buildLicenseForm($form, $form_state);
     }
 
     // Add the submit button.
