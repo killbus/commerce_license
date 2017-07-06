@@ -3,6 +3,7 @@ type: module
 description: License entities and product behavior
 core: 8.x
 package: Commerce
+configure: entity.commerce_license.collection
 dependencies:
   - commerce
   - commerce_checkout
