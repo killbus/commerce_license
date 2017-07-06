@@ -8,9 +8,9 @@ use Drupal\commerce\BundleFieldDefinition;
 
 /**
  * @CommerceEntityTrait(
- *  id = "commerce_entity_trait",
- *  label = @Translation("The plugin ID."),
- *  entity_types = "array",
+ *  id = "commerce_license",
+ *  label = @Translation("Provides a license."),
+ *  entity_types = {"commerce_product_variation"}
  * )
  */
 class PurchasableEntityLicensed extends EntityTraitBase {
