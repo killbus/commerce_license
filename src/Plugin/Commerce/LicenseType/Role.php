@@ -22,7 +22,7 @@ class Role extends Base {
     $args = [
       '@id' => $license->license_id,
     ];
-    return $this->t('File license (@id)', $args);
+    return $this->t('Role license (@id)', $args);
   }
 
   /**
