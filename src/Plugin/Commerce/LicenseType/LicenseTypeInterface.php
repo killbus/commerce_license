@@ -8,27 +8,26 @@ use Drupal\commerce\BundlePluginInterface;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
 /**
- * Defines the interface for payment method types.
+ * Defines the interface for license types.
  */
 interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
-   * Gets the payment method type label.
+   * Gets the license type label.
    *
    * @return string
-   *   The payment method type label.
+   *   The license type label.
    */
   public function getLabel();
 
   /**
-   * Builds a label for the given payment method.
+   * Build a label for the given license type.
    *
-   * @param \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method
-   *   The payment method.
+   * @param \Drupal\commerce_license\Entity\LicenseInterface $license
    *
    * @return string
    *   The label.
    */
-  public function buildLabel(LicenseInterface $payment_method);
+  public function buildLabel(LicenseInterface $license);
 
 }

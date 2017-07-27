@@ -8,7 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages discovery and instantiation of payment method type plugins.
+ * Manages discovery and instantiation of license type plugins.
  *
  * @see \Drupal\commerce_license\Annotation\CommerceLicenseType
  * @see plugin_api
@@ -16,7 +16,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class LicenseTypeManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new PaymentMethodTypeManager object.
+   * Constructs a new LicenseTypeManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

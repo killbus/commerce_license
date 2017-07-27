@@ -5,7 +5,7 @@ namespace Drupal\commerce_license\Plugin\Commerce\LicenseType;
 use Drupal\Core\Plugin\PluginBase;
 
 /**
- * Provides the base payment method type class.
+ * Provides the base license type class.
  */
 abstract class SynchronizableBase extends Base implements LicenseTypeSynchronizableInterface {
 

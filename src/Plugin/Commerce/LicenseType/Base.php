@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 
 /**
- * Provides the base payment method type class.
+ * Provides the base license type class.
  */
 abstract class Base extends PluginBase implements LicenseTypeInterface {
 

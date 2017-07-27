@@ -147,7 +147,7 @@ class LicenseCreateForm extends FormBase implements ContainerInjectionInterface 
     $step = $form_state->get('step');
     if (!$step) {
       $step = 'license_type';
-      // Skip the payment method type selection if there's only 1 type.
+      // Skip the license type selection if there's only 1 type.
       $plugins = array_column($this->pluginManager->getDefinitions(), 'label', 'id');
       if (count($plugins) === 1) {
         /** @var \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface $license_type */

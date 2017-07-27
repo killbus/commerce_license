@@ -6,7 +6,7 @@ use Drupal\commerce\BundlePluginInterface;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
 /**
- * Defines the interface for payment method types.
+ * Defines the interface for license types.
  */
 interface LicenseTypeSynchronizableInterface extends LicenseTypeInterface {
 
@@ -22,7 +22,7 @@ interface LicenseTypeSynchronizableInterface extends LicenseTypeInterface {
    * Builds a label for the given license.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
-   *   The payment method.
+   *   The license type.
    *
    * @return string
    *   The label.
