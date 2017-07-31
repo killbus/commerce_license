@@ -37,4 +37,12 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
    */
   public function setCreatedTime($timestamp);
 
+  /**
+   * Gets the workflow ID that this license's state field should use.
+   *
+   * @return string
+   *   The workflow ID.
+   */
+  public static function getWorkflowId();
+
 }

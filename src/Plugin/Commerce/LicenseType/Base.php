@@ -21,6 +21,13 @@ abstract class Base extends PluginBase implements LicenseTypeInterface {
   /**
    * {@inheritdoc}
    */
+  public function getWorkflowId() {
+    return 'license_default';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
   }
 

@@ -50,7 +50,6 @@ use Drupal\user\UserInterface;
  *     "bundle" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
- *     "status" = "status",
  *   },
  *   links = {
  *     "canonical" = "/admin/commerce/licenses/{commerce_license}",
@@ -147,6 +146,14 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
+  public static function getWorkflowId() {
+    $workflow = $this->getType()->getWorkflowId();
+    return $workflow;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -164,10 +171,19 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the License is published.'))
-      ->setDefaultValue(TRUE);
+    $fields['state'] = BaseFieldDefinition::create('state')
+      ->setLabel(t('State'))
+      ->setDescription(t('The license state.'))
+      ->setRequired(TRUE)
+      ->setSetting('max_length', 255)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'state_transition_form',
+        'weight' => 10,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setSetting('workflow_callback', ['\Drupal\commerce_license\Entity\License', 'getWorkflowId']);
 
     $fields['product'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Licensed product'))

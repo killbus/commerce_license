@@ -30,4 +30,12 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
    */
   public function buildLabel(LicenseInterface $license);
 
+  /**
+   * Gets the workflow ID this this license type should use.
+   *
+   * @return string
+   *   The ID of the workflow used for this license type.
+   */
+  public function getWorkflowId();
+
 }
