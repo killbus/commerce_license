@@ -8,3 +8,4 @@ dependencies:
   - commerce
   - commerce_checkout
   - commerce_product
+  - state_machine
