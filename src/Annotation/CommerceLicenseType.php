@@ -4,7 +4,8 @@ namespace Drupal\commerce_license\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
 
-/** * Defines the payment type plugin annotation object.
+/**
+ * Defines the license type plugin annotation object.
  *
  * Plugin namespace: Plugin\Commerce\LicenseType.
  *
@@ -22,7 +23,7 @@ class CommerceLicenseType extends Plugin {
   public $id;
 
   /**
-   * The payment type label.
+   * The license type label.
    *
    * @ingroup plugin_translatable
    *
