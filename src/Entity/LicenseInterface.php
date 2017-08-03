@@ -6,6 +6,7 @@ use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Url;
+use Drupal\commerce_license\Entity\LicenseInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -38,11 +39,16 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function setCreatedTime($timestamp);
 
   /**
-   * Gets the workflow ID that this license's state field should use.
+   * Implements the workflow_callback for the state field.
+   *
+   * @param \Drupal\commerce_license\Entity\LicenseInterface $license
+   *   The license.
    *
    * @return string
    *   The workflow ID.
+   *
+   * @see Drupal\state_machine\Plugin\Field\FieldType\StateItem
    */
-  public static function getWorkflowId();
+  public static function getWorkflowId(LicenseInterface $license);
 
 }

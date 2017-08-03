@@ -146,9 +146,8 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getWorkflowId() {
-    $workflow = $this->getType()->getWorkflowId();
-    return $workflow;
+  public static function getWorkflowId(LicenseInterface $license) {
+    return $license->getType()->getWorkflowId();
   }
 
   /**
