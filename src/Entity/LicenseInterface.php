@@ -2,11 +2,6 @@
 
 namespace Drupal\commerce_license\Entity;
 
-use Drupal\Core\Entity\RevisionLogInterface;
-use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Url;
-use Drupal\commerce_license\Entity\LicenseInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -47,7 +42,7 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
    * @return string
    *   The workflow ID.
    *
-   * @see Drupal\state_machine\Plugin\Field\FieldType\StateItem
+   * @see \Drupal\state_machine\Plugin\Field\FieldType\StateItem
    */
   public static function getWorkflowId(LicenseInterface $license);
 

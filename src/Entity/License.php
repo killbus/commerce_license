@@ -136,8 +136,8 @@ class License extends ContentEntityBase implements LicenseInterface {
 
 
   /**
-   *    * {@inheritdoc}
-   *       */
+   * {@inheritdoc}
+   */
   public function setOwner(UserInterface $account) {
     $this->set('uid', $account->id());
     return $this;
