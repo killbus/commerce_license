@@ -34,6 +34,13 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function setCreatedTime($timestamp);
 
   /**
+   * Get an unconfigured instance of the associated license type plugin.
+   *
+   * @return \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface
+   */
+  public function getTypePlugin();
+
+  /**
    * Implements the workflow_callback for the state field.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
