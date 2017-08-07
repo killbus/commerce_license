@@ -38,4 +38,24 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
    */
   public function getWorkflowId();
 
+  /**
+   * Reacts to the license being activated.
+   *
+   * The license's privileges should be granted to its user.
+   *
+   * @param \Drupal\commerce_license\Entity\LicenseInterface $license
+   *   The license entity.
+   */
+  public function licenseActivated(LicenseInterface $license);
+
+  /**
+   * Reacts to the license being revoked.
+   *
+   * The license's privileges should be removed from its user.
+   *
+   * @param \Drupal\commerce_license\Entity\LicenseInterface $license
+   *   The license entity.
+   */
+  public function licenseRevoked(LicenseInterface $license);
+
 }

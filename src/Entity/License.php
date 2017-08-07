@@ -77,6 +77,54 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+
+    // If the state is being changed to 'active', set a timestamp.
+    // We don't notify the license type plugin here in case the save is
+    // cancelled by something else.
+    if ($this->state->value != $this->original->state->value) {
+      if ($this->state->value == 'active') {
+        $this->set('granted', \Drupal::service('datetime.time')->getRequestTime());
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+
+    // If the state was changed, notify our license type plugin.
+    if ($this->state->value != $this->original->state->value) {
+      if ($this->state->value == 'active') {
+        // The state is moved to 'active': the license activates.
+        $this->getTypePlugin()->licenseActivated($this);
+      }
+
+      if ($this->original->state->value == 'active') {
+        // The state is moved away from 'active': the license is revoked.
+        $this->getTypePlugin()->licenseRevoked($this);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete() {
+    // Revoke the license if it is active.
+    if ($this->state->value == 'active') {
+      $this->getTypePlugin()->licenseRevoked($this);
+    }
+
+    parent::delete();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getTypePlugin() {
     /** @var \Drupal\commerce_license\LicenseTypeManager $license_type_manager */
     $license_type_manager = \Drupal::service('plugin.manager.commerce_license_type');

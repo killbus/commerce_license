@@ -28,6 +28,20 @@ class Role extends Base {
   /**
    * {@inheritdoc}
    */
+  public function licenseActivated(LicenseInterface $license) {
+    // TODO.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function licenseRevoked(LicenseInterface $license) {
+    // TODO
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildFieldDefinitions() {
     $fields = parent::buildFieldDefinitions();
 
