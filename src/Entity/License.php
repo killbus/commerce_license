@@ -84,7 +84,8 @@ class License extends ContentEntityBase implements LicenseInterface {
     // If the state is being changed to 'active', set a timestamp.
     // We don't notify the license type plugin here in case the save is
     // cancelled by something else.
-    if ($this->state->value != $this->original->state->value) {
+    // (Note that $this->original is not set on new entities.)
+    if ((isset($this->original) && $this->state->value != $this->original->state->value) || !isset($this->original)) {
       if ($this->state->value == 'active') {
         $this->set('granted', \Drupal::service('datetime.time')->getRequestTime());
       }
@@ -98,13 +99,15 @@ class License extends ContentEntityBase implements LicenseInterface {
     parent::postSave($storage, $update);
 
     // If the state was changed, notify our license type plugin.
-    if ($this->state->value != $this->original->state->value) {
+    // (Note that $this->original is not set on new entities.)
+    if ((isset($this->original) && $this->state->value != $this->original->state->value) || !isset($this->original)) {
       if ($this->state->value == 'active') {
-        // The state is moved to 'active': the license activates.
+        // The state is moved to 'active', or the license was created active:
+        // the license activates.
         $this->getTypePlugin()->licenseActivated($this);
       }
 
-      if ($this->original->state->value == 'active') {
+      if (isset($this->original) && $this->original->state->value == 'active') {
         // The state is moved away from 'active': the license is revoked.
         $this->getTypePlugin()->licenseRevoked($this);
       }
