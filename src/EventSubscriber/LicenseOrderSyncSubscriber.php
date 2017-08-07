@@ -91,8 +91,9 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
         'uid' => $order->uid,
       ]);
 
-      // TODO: take the license's plugin-specific configuration from the
+      // Set the license's plugin-specific configuration from the
       // product variation's license_type field plugin instance.
+      $license->setValuesFromPlugin($license_type_plugin);
 
       $license->save();
 
