@@ -109,7 +109,7 @@ class License extends ContentEntityBase implements LicenseInterface {
 
       if (isset($this->original) && $this->original->state->value == 'active') {
         // The state is moved away from 'active': the license is revoked.
-        $this->getTypePlugin()->licenseRevoked($this);
+        $this->getTypePlugin()->licenseDeactivated($this);
       }
     }
   }
@@ -120,7 +120,7 @@ class License extends ContentEntityBase implements LicenseInterface {
   public function delete() {
     // Revoke the license if it is active.
     if ($this->state->value == 'active') {
-      $this->getTypePlugin()->licenseRevoked($this);
+      $this->getTypePlugin()->licenseDeactivated($this);
     }
 
     parent::delete();

@@ -35,7 +35,7 @@ class Role extends Base {
   /**
    * {@inheritdoc}
    */
-  public function licenseRevoked(LicenseInterface $license) {
+  public function licenseDeactivated(LicenseInterface $license) {
     // TODO
   }
 
