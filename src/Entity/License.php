@@ -95,7 +95,7 @@ class License extends ContentEntityBase implements LicenseInterface {
   public function getTypePlugin() {
     /** @var \Drupal\commerce_license\LicenseTypeManager $license_type_manager */
     $license_type_manager = \Drupal::service('plugin.manager.commerce_license_type');
-    return $license_type_manager->createInstance($this->type);
+    return $license_type_manager->createInstance($this->bundle());
   }
 
   /**
