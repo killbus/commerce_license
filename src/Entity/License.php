@@ -70,6 +70,7 @@ class License extends ContentEntityBase implements LicenseInterface {
     parent::preCreate($storage_controller, $values);
     $values += array(
       'uid' => \Drupal::currentUser()->id(),
+      'created' => \Drupal::service('datetime.time')->getRequestTime(),
     );
   }
 
@@ -142,6 +143,13 @@ class License extends ContentEntityBase implements LicenseInterface {
   public function setOwner(UserInterface $account) {
     $this->set('uid', $account->id());
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getState() {
+    return $this->get('state')->first();
   }
 
   /**

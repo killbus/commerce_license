@@ -41,6 +41,14 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function getTypePlugin();
 
   /**
+   * Gets the license state.
+   *
+   * @return \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface
+   *   The shipment state.
+   */
+  public function getState();
+
+  /**
    * Implements the workflow_callback for the state field.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
