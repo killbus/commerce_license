@@ -13,6 +13,22 @@ use Drupal\commerce_license\Entity\LicenseInterface;
 abstract class Base extends PluginBase implements LicenseTypeInterface {
 
   /**
+   * Constructs a new plugin instance.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The pluginId for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->setConfiguration($configuration);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getLabel() {
