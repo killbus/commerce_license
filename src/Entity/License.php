@@ -8,6 +8,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
+use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
 
 /**
  * Defines the License entity.
@@ -129,6 +130,13 @@ class License extends ContentEntityBase implements LicenseInterface {
     /** @var \Drupal\commerce_license\LicenseTypeManager $license_type_manager */
     $license_type_manager = \Drupal::service('plugin.manager.commerce_license_type');
     return $license_type_manager->createInstance($this->bundle());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setValuesFromPlugin(LicenseTypeInterface $license_plugin) {
+    $license_plugin->setConfigurationValuesOnLicense($this);
   }
 
   /**

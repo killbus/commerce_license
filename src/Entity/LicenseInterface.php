@@ -4,6 +4,7 @@ namespace Drupal\commerce_license\Entity;
 
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
+use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
 
 /**
  * Provides an interface for defining License entities.
@@ -47,6 +48,18 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
    *   The shipment state.
    */
   public function getState();
+
+  /**
+   * Set values on the license from a configured license type plugin.
+   *
+   * This should be called when a license is created for an order, using the
+   * configured license type plugin on the product variation that is being
+   * purchased.
+   *
+   * @param \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface
+   *   The configured license type plugin.
+   */
+  public function setValuesFromPlugin(LicenseTypeInterface $license_plugin);
 
   /**
    * Implements the workflow_callback for the state field.

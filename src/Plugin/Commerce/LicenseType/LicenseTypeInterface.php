@@ -39,6 +39,15 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
   public function getWorkflowId();
 
   /**
+   * Copy configuration values to a license entity.
+   *
+   * This does not save the license.
+   *
+   * @param \Drupal\commerce_license\Entity\LicenseInterface $license
+   */
+  public function setConfigurationValuesOnLicense(LicenseInterface $license);
+
+  /**
    * Reacts to the license being activated.
    *
    * The license's privileges should be granted to its user.
