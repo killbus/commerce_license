@@ -77,22 +77,6 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
-  public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
-
-    foreach (array_keys($this->getTranslationLanguages()) as $langcode) {
-      $translation = $this->getTranslation($langcode);
-
-      // If no owner has been set explicitly, make the anonymous user the owner.
-      if (!$translation->getOwner()) {
-        $translation->setOwnerId(0);
-      }
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getTypePlugin() {
     /** @var \Drupal\commerce_license\LicenseTypeManager $license_type_manager */
     $license_type_manager = \Drupal::service('plugin.manager.commerce_license_type');
