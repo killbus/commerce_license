@@ -236,6 +236,13 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setDisplayConfigurable('view', TRUE)
       ->setSetting('workflow_callback', ['\Drupal\commerce_license\Entity\License', 'getWorkflowId']);
 
+    $fields['queues'] = BaseFieldDefinition::create('text')
+      ->setLabel(t('Queues'))
+      ->setDescription(t('The queues in which this license is currently placed.'))
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
+
     $fields['product'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Licensed product'))
       ->setDescription(t('The licensed product.'))
