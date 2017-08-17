@@ -2,10 +2,10 @@
 
 namespace Drupal\commerce_license\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Drupal\commerce\Event\ReferenceablePluginTypesEvent;
 use Drupal\commerce\Event\CommerceEvents;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class ReferenceablePluginTypesSubscriber.
@@ -14,12 +14,7 @@ use Drupal\commerce\Event\CommerceEvents;
  */
 class ReferenceablePluginTypesSubscriber implements EventSubscriberInterface {
 
-  /**
-   * Constructor.
-   */
-  public function __construct() {
-
-  }
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -38,7 +33,7 @@ class ReferenceablePluginTypesSubscriber implements EventSubscriberInterface {
    */
   public function onPluginTypes(ReferenceablePluginTypesEvent $event) {
     $plugin_types = $event->getPluginTypes();
-    $plugin_types['commerce_license_type'] = t('License type');
+    $plugin_types['commerce_license_type'] = $this->t('License type');
     $event->setPluginTypes($plugin_types);
   }
 
