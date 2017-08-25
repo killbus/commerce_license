@@ -79,21 +79,7 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
 
     foreach ($license_order_items as $order_item) {
       // Create a new license.
-      $purchased_entity = $order_item->getPurchasedEntity();
-      $license_type_plugin = $purchased_entity->get('license_type')->first()->getTargetInstance();
-
-      $license = $this->licenseStorage->create([
-        'type' => $license_type_plugin->getPluginId(),
-        'state' => 'new',
-        'product' => $purchased_entity->id(),
-        // Take the license owner from the order, for the case when orders are
-        // created for another user.
-        'uid' => $order->uid,
-      ]);
-
-      // Set the license's plugin-specific configuration from the
-      // product variation's license_type field plugin instance.
-      $license->setValuesFromPlugin($license_type_plugin);
+      $license = $this->licenseStorage->createFromOrderItem($order_item);
 
       $license->save();
 
