@@ -55,7 +55,7 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
    *   The license entity.
    */
-  public function licenseActivated(LicenseInterface $license);
+  public function grantLicense(LicenseInterface $license);
 
   /**
    * Reacts to the license being revoked.
@@ -65,6 +65,6 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
    *   The license entity.
    */
-  public function licenseDeactivated(LicenseInterface $license);
+  public function revokeLicense(LicenseInterface $license);
 
 }

@@ -23,17 +23,17 @@ class CommerceLicenseStateChangeTest extends Base {
   /**
    * {@inheritdoc}
    */
-  public function licenseActivated(LicenseInterface $license) {
+  public function grantLicense(LicenseInterface $license) {
     $state = \Drupal::state();
-    $state->set('commerce_license_state_change_test', 'licenseActivated');
+    $state->set('commerce_license_state_change_test', 'grantLicense');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function licenseDeactivated(LicenseInterface $license) {
+  public function revokeLicense(LicenseInterface $license) {
     $state = \Drupal::state();
-    $state->set('commerce_license_state_change_test', 'licenseDeactivated');
+    $state->set('commerce_license_state_change_test', 'revokeLicense');
   }
 
 }

@@ -75,7 +75,7 @@ class LicenseStateChangeTest extends KernelTestBase {
     $license->save();
 
     // The license is now active: the plugin should be called.
-    $this->assertEqual(\Drupal::state()->get('commerce_license_state_change_test'), 'licenseActivated');
+    $this->assertEqual(\Drupal::state()->get('commerce_license_state_change_test'), 'grantLicense');
 
     // Reset the test tracking state.
     \Drupal::state()->set('commerce_license_state_change_test', NULL);
@@ -92,7 +92,7 @@ class LicenseStateChangeTest extends KernelTestBase {
     $license->save();
 
     // The license is now inactive: the plugin should be called.
-    $this->assertEqual(\Drupal::state()->get('commerce_license_state_change_test'), 'licenseDeactivated');
+    $this->assertEqual(\Drupal::state()->get('commerce_license_state_change_test'), 'revokeLicense');
 
     // Reset the test tracking state.
     \Drupal::state()->set('commerce_license_state_change_test', NULL);
@@ -120,7 +120,7 @@ class LicenseStateChangeTest extends KernelTestBase {
     $license->save();
 
     // The license is created active: the plugin should be called.
-    $this->assertEqual(\Drupal::state()->get('commerce_license_state_change_test'), 'licenseActivated');
+    $this->assertEqual(\Drupal::state()->get('commerce_license_state_change_test'), 'grantLicense');
   }
 
 }

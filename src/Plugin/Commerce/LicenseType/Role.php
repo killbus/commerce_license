@@ -30,7 +30,7 @@ class Role extends Base {
   /**
    * {@inheritdoc}
    */
-  public function licenseActivated(LicenseInterface $license) {
+  public function grantLicense(LicenseInterface $license) {
     // Get the role ID that this license grants.
     $role_id = $license->license_role->first()->target_id;
 
@@ -46,7 +46,7 @@ class Role extends Base {
   /**
    * {@inheritdoc}
    */
-  public function licenseDeactivated(LicenseInterface $license) {
+  public function revokeLicense(LicenseInterface $license) {
     // Get the role ID that this license grants.
     $role_id = $license->license_role->first()->target_id;
 

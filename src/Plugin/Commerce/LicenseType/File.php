@@ -29,14 +29,14 @@ class File extends Base {
   /**
    * {@inheritdoc}
    */
-  public function licenseActivated(LicenseInterface $license) {
+  public function grantLicense(LicenseInterface $license) {
     // TODO.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function licenseDeactivated(LicenseInterface $license) {
+  public function revokeLicense(LicenseInterface $license) {
     // TODO
   }
 

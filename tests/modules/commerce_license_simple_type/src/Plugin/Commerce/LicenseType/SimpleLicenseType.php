@@ -27,13 +27,13 @@ class SimpleLicenseType extends Base {
   /**
    * {@inheritdoc}
    */
-  public function licenseActivated(LicenseInterface $license) {
+  public function grantLicense(LicenseInterface $license) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function licenseDeactivated(LicenseInterface $license) {
+  public function revokeLicense(LicenseInterface $license) {
   }
 
 }
