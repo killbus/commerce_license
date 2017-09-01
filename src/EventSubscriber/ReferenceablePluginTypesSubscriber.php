@@ -26,7 +26,7 @@ class ReferenceablePluginTypesSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Registers the 'commerce_license_type' plugin type as referenceable.
+   * Registers our plugin types as referenceable.
    *
    * @param \Drupal\commerce\Event\ReferenceablePluginTypesEvent $event
    *   The event.
@@ -34,6 +34,7 @@ class ReferenceablePluginTypesSubscriber implements EventSubscriberInterface {
   public function onPluginTypes(ReferenceablePluginTypesEvent $event) {
     $plugin_types = $event->getPluginTypes();
     $plugin_types['commerce_license_type'] = $this->t('License type');
+    $plugin_types['commerce_license_expiration'] = $this->t('License expiration');
     $event->setPluginTypes($plugin_types);
   }
 

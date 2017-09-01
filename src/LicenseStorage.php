@@ -34,6 +34,9 @@ class LicenseStorage extends CommerceContentEntityStorage implements LicenseStor
       // Take the license owner from the order, for the case when orders are
       // created for another user.
       'uid' => $order_item->getOrder()->uid,
+      // Take the expiration type configuration from the purchased entity's
+      // expiration field.
+      'expiration_type' => $purchased_entity->license_expiration,
     ]);
 
     // Set the license's plugin-specific configuration from the

@@ -54,6 +54,11 @@ class LicenseStateChangeTest extends KernelTestBase {
       'state' => 'new',
       'product' => 1,
       'uid' => 1,
+      // Use the unlimited expiry plugin as it's simple.
+      'expiration_type' => [
+        'target_plugin_id' => 'unlimited',
+        'target_plugin_configuration' => [],
+      ],
     ]);
 
     $license->save();
@@ -115,6 +120,10 @@ class LicenseStateChangeTest extends KernelTestBase {
       'state' => 'active',
       'product' => 1,
       'uid' => 1,
+      'expiration_type' => [
+        'target_plugin_id' => 'unlimited',
+        'target_plugin_configuration' => [],
+      ],
     ]);
 
     $license->save();

@@ -81,13 +81,17 @@ class License extends ContentEntityBase implements LicenseInterface {
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
 
-    // If the state is being changed to 'active', set a timestamp.
+    // If the state is being changed to 'active', set the granted and expiration
+    // timestamps.
     // We don't notify the license type plugin here in case the save is
     // cancelled by something else.
     // (Note that $this->original is not set on new entities.)
     if ((isset($this->original) && $this->state->value != $this->original->state->value) || !isset($this->original)) {
       if ($this->state->value == 'active') {
-        $this->set('granted', \Drupal::service('datetime.time')->getRequestTime());
+        $granted_time = \Drupal::service('datetime.time')->getRequestTime();
+
+        $this->set('granted', $granted_time);
+        $this->set('expiration', $this->calculateExpirationTime($granted_time));
       }
     }
   }
@@ -155,6 +159,20 @@ class License extends ContentEntityBase implements LicenseInterface {
   public function setCreatedTime($timestamp) {
     $this->set('created', $timestamp);
     return $this;
+  }
+
+  /**
+   * Calculate the expiration time for this license from a start time.
+   *
+   * @param int $start
+   *   The timestamp to calculate the duration from.
+   *
+   * @return int
+   *   The expiry timestamp.
+   */
+  protected function calculateExpirationTime($start) {
+    $expiration_type_plugin = $this->get('expiration_type')->first()->getTargetInstance();
+    return $expiration_type_plugin->calculateDate($start);
   }
 
   /**
@@ -258,6 +276,17 @@ class License extends ContentEntityBase implements LicenseInterface {
         ],
       ])
       ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['expiration_type'] = BaseFieldDefinition::create('commerce_plugin_item:commerce_license_expiration')
+      ->setLabel(t('Expiration type'))
+      ->setDescription(t("The configuration for calculating the license's expiry."))
+      ->setCardinality(1)
+      ->setRequired(FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'commerce_plugin_select',
+        'weight' => 21,
+      ])
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')

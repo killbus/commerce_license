@@ -29,6 +29,14 @@ class PurchasableEntityLicensed extends EntityTraitBase {
         'type' => 'commerce_plugin_select',
         'weight' => 20,
       ]);
+    $fields['license_expiration'] = BundleFieldDefinition::create('commerce_plugin_item:commerce_license_expiration')
+      ->setLabel(t('License Expiration'))
+      ->setCardinality(1)
+      ->setRequired(FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'commerce_plugin_select',
+        'weight' => 21,
+      ]);
     return $fields;
   }
 

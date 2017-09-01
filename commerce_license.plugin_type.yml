@@ -3,3 +3,8 @@ commerce_license.license_type:
   provider: commerce_license
   plugin_manager_service_id: plugin.manager.commerce_license_type
   plugin_definition_decorator_class: Drupal\plugin\PluginDefinition\ArrayPluginDefinitionDecorator
+commerce_license.license_expiration:
+  label: Commerce license expiration
+  provider: commerce_license
+  plugin_manager_service_id: plugin.manager.commerce_license_expiration
+  plugin_definition_decorator_class: Drupal\plugin\PluginDefinition\ArrayPluginDefinitionDecorator
