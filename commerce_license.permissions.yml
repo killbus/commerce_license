@@ -1,5 +1,7 @@
 create licenses:
   title: 'Create new License entities'
+  description: 'Create licenses in administrative mode, bypassing the purchase of a product.'
+  restrict access: true
 
 administer licenses:
   title: 'Administer License entities'
