@@ -71,7 +71,6 @@ class License extends ContentEntityBase implements LicenseInterface {
     parent::preCreate($storage_controller, $values);
     $values += array(
       'uid' => \Drupal::currentUser()->id(),
-      'created' => \Drupal::service('datetime.time')->getRequestTime(),
     );
   }
 
