@@ -64,14 +64,11 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
       'state' => 'new',
       'product' => 1,
       'uid' => $license_owner->id(),
-      /*
-      // @todo this depends on https://www.drupal.org/node/2879301
       // Use the unlimited expiry plugin as it's simple.
       'license_expiration' => [
         'target_plugin_id' => 'unlimited',
         'target_plugin_configuration' => [],
       ],
-      */
       'license_role' => $role,
     ]);
 

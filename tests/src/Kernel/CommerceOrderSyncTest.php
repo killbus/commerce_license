@@ -106,6 +106,11 @@ class CommerceOrderSyncTest extends CommerceKernelTestBase {
         'target_plugin_id' => 'simple',
         'target_plugin_configuration' => [],
       ],
+      // Use the unlimited expiry plugin as it's simple.
+      'license_expiration' => [
+        'target_plugin_id' => 'unlimited',
+        'target_plugin_configuration' => [],
+      ],
     ]);
 
     // We need a product too otherwise tests complain about the missing
