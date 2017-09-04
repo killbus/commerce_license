@@ -30,6 +30,15 @@ class Role extends Base {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return [
+        'license_role' => ''
+    ] + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function grantLicense(LicenseInterface $license) {
     // Get the role ID that this license grants.
     $role_id = $license->license_role->first()->target_id;
@@ -82,7 +91,7 @@ class Role extends Base {
       '#type' => 'radios',
       '#title' => $this->t('Licensed role'),
       '#options' => $options,
-      '#default_value' => isset($this->configuration['license_role']) ? $this->configuration['license_role'] : '',
+      '#default_value' => $this->configuration['license_role'],
       '#required' => TRUE,
     ];
 
