@@ -2,7 +2,7 @@
 
 namespace Drupal\commerce_license_simple_type\Plugin\Commerce\LicenseType;
 
-use Drupal\commerce_license\Plugin\Commerce\LicenseType\Base;
+use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeBase;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
 /**
@@ -15,7 +15,7 @@ use Drupal\commerce_license\Entity\LicenseInterface;
  *   label = @Translation("Simple license"),
  * )
  */
-class SimpleLicenseType extends Base {
+class SimpleLicenseType extends LicenseTypeBase {
 
   /**
    * {@inheritdoc}

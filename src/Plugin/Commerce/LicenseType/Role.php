@@ -15,7 +15,7 @@ use Drupal\commerce_license\Entity\LicenseInterface;
  *   label = @Translation("Role"),
  * )
  */
-class Role extends Base {
+class Role extends LicenseTypeBase {
 
   /**
    * {@inheritdoc}

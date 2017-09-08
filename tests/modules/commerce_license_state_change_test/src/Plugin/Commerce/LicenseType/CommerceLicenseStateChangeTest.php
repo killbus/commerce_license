@@ -2,7 +2,7 @@
 
 namespace Drupal\commerce_license_state_change_test\Plugin\Commerce\LicenseType;
 
-use Drupal\commerce_license\Plugin\Commerce\LicenseType\Base;
+use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeBase;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
 /**
@@ -11,7 +11,7 @@ use Drupal\commerce_license\Entity\LicenseInterface;
  *   label = @Translation("State change test"),
  * )
  */
-class CommerceLicenseStateChangeTest extends Base {
+class CommerceLicenseStateChangeTest extends LicenseTypeBase {
 
   /**
    * {@inheritdoc}

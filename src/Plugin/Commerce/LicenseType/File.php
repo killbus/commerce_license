@@ -14,7 +14,7 @@ use Drupal\commerce_license\Entity\LicenseInterface;
  *   label = @Translation("File"),
  * )
  */
-class File extends Base {
+class File extends LicenseTypeBase {
 
   /**
    * {@inheritdoc}

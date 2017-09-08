@@ -10,7 +10,7 @@ use Drupal\commerce_license\Entity\LicenseInterface;
 /**
  * Provides the base license type class.
  */
-abstract class Base extends PluginBase implements LicenseTypeInterface {
+abstract class LicenseTypeBase extends PluginBase implements LicenseTypeInterface {
 
   /**
    * Constructs a new plugin instance.
