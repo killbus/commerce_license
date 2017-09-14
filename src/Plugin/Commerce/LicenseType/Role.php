@@ -32,7 +32,7 @@ class Role extends LicenseTypeBase {
    */
   public function defaultConfiguration() {
     return [
-        'license_role' => ''
+      'license_role' => ''
     ] + parent::defaultConfiguration();
   }
 
