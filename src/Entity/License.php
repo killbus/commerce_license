@@ -36,7 +36,7 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *       "checkout" = "Drupal\commerce_license\Form\LicenseCheckoutForm",
  *       "create" = "Drupal\commerce_license\Form\LicenseCreateForm",
  *       "edit" = "Drupal\commerce_license\Form\LicenseForm",
- *       "delete" = "Drupal\commerce_license\Form\LicenseDeleteForm",
+ *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
  *     },
  *     "views_data" = "Drupal\views\EntityViewsData",
  *     "route_provider" = {
