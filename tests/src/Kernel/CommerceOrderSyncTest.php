@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\commerce_license\Kernel\System;
+namespace Drupal\Tests\commerce_license\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;

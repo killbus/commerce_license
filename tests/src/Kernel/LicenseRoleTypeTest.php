@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\commerce_license\Kernel\System;
+namespace Drupal\Tests\commerce_license\Kernel;
 
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 
