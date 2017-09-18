@@ -13,7 +13,7 @@ use Drupal\commerce\BundleFieldDefinition;
  *  entity_types = {"commerce_product_variation"}
  * )
  */
-class PurchasableEntityLicensed extends EntityTraitBase {
+class ProductVariationLicensed extends EntityTraitBase {
 
   /**
    * {@inheritdoc}

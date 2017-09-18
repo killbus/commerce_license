@@ -12,7 +12,7 @@ use Drupal\commerce\BundleFieldDefinition;
  *  entity_types = {"commerce_order_item"}
  * )
  */
-class LicensedOrderItemType extends EntityTraitBase {
+class OrderItemLicensed extends EntityTraitBase {
 
   /**
    * {@inheritdoc}
