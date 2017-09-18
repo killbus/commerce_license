@@ -46,6 +46,7 @@ abstract class LicenseTypeBase extends PluginBase implements LicenseTypeInterfac
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    return [];
   }
 
   /**
