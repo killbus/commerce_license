@@ -24,7 +24,7 @@ class ProductVariationLicensed extends EntityTraitBase {
     $fields['license_type'] = BundleFieldDefinition::create('commerce_plugin_item:commerce_license_type')
       ->setLabel(t('License Type'))
       ->setCardinality(1)
-      ->setRequired(FALSE)
+      ->setRequired(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'commerce_plugin_select',
         'weight' => 20,
@@ -32,7 +32,7 @@ class ProductVariationLicensed extends EntityTraitBase {
     $fields['license_expiration'] = BundleFieldDefinition::create('commerce_plugin_item:commerce_license_expiration')
       ->setLabel(t('License Expiration'))
       ->setCardinality(1)
-      ->setRequired(FALSE)
+      ->setRequired(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'commerce_plugin_select',
         'weight' => 21,
