@@ -147,15 +147,16 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
     $return_items = [];
 
     foreach ($order->getItems() as $order_item) {
-      $purchased_entity = $order_item->getPurchasedEntity();
-
-      // Skip purchased entities that do not grant a license.
-      // Checking the purchased entity's bundle for the trait is expensive, as
+      // Skip order items that do not have a license reference field.
+      // We check order items rather than the purchased entity to allow products
+      // with licenses to be purchased without the checkout flow triggering
+      // our synchronization. This is for cases such as recurring orders, where
+      // the license entity should not be put through the normal workflow.
+      // Checking the order item's bundle for our entity trait is expensive, as
       // it requires loading the bundle entity to call hasTrait() on it.
-      // For now, just check whether the purchased entity has our
-      // commerce_license trait's field on it.
+      // For now, just check whether the order item has our trait's field on it.
       // @see https://www.drupal.org/node/2894805
-      if (!$purchased_entity->hasField('license_type')) {
+      if (!$order_item->hasField('license')) {
         continue;
       }
 
