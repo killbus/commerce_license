@@ -78,15 +78,24 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
     $license_order_items = $this->getOrderItemsWithLicensedProducts($order);
 
     foreach ($license_order_items as $order_item) {
-      // Create a new license.
-      $license = $this->licenseStorage->createFromOrderItem($order_item);
+      // Only create a new license if the order item doesn't already have one:
+      // this allows for orders to be created programmatically with a configured
+      // license.
+      if (empty($order_item->license->entity)) {
+        // Create a new license.
+        $license = $this->licenseStorage->createFromOrderItem($order_item);
 
-      $license->save();
+        $license->save();
 
-      // St the license field on the order item so we have a reference
-      // and can get hold of it in later events.
-      $order_item->license = $license->id();
-      $order_item->save();
+        // Set the license field on the order item so we have a reference
+        // and can get hold of it in later events.
+        $order_item->license = $license->id();
+        $order_item->save();
+      }
+      else {
+        // Get the existing license the order item refers to.
+        $license = $order_item->license->entity;
+      }
 
       // Attempt to activate and confirm the license.
       // TODO: This needs to be expanded for synchronizable licenses.
