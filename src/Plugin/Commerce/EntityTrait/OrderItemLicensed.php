@@ -6,6 +6,18 @@ use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitBase;
 use Drupal\commerce\BundleFieldDefinition;
 
 /**
+ * Provides an entity trait for Commerce Order Item entities.
+ *
+ * Product variations that sell a license must use an order item that uses this
+ * trait in order for the license to be created and granted when the order goes
+ * through the checkout process.
+ *
+ * You may use an order item without this trait, provided you either ensure
+ * synchronization of the license entity another way, or do not require it, for
+ * example in a recurring order.
+ *
+ * @see \Drupal\commerce_license\EventSubscriber\LicenseOrderSyncSubscriber
+ *
  * @CommerceEntityTrait(
  *  id = "commerce_license_order_item_type",
  *  label = @Translation("Provides an order item type for use with licenses."),

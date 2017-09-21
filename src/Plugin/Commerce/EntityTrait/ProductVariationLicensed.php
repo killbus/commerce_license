@@ -7,6 +7,12 @@ use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitBase;
 use Drupal\commerce\BundleFieldDefinition;
 
 /**
+ * Provides an entity trait for Commerce Product Variation entities.
+ *
+ * Product variations that sell a license must use this trait. This adds fields
+ * to the product variation type for storing the configuration of the licenses
+ * that will be created when the product is purchased.
+ *
  * @CommerceEntityTrait(
  *  id = "commerce_license",
  *  label = @Translation("Provides a license."),
