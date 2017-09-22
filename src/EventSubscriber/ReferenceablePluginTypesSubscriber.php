@@ -34,7 +34,6 @@ class ReferenceablePluginTypesSubscriber implements EventSubscriberInterface {
   public function onPluginTypes(ReferenceablePluginTypesEvent $event) {
     $plugin_types = $event->getPluginTypes();
     $plugin_types['commerce_license_type'] = $this->t('License type');
-    $plugin_types['commerce_license_expiration'] = $this->t('License expiration');
     $event->setPluginTypes($plugin_types);
   }
 

@@ -7,9 +7,6 @@ services:
   plugin.manager.commerce_license_type:
     class: Drupal\commerce_license\LicenseTypeManager
     parent: default_plugin_manager
-  plugin.manager.commerce_license_expiration:
-    class: Drupal\commerce_license\CommerceLicenseExpirationManager
-    parent: default_plugin_manager
   commerce_license.license_order_sync_subscriber:
     class: Drupal\commerce_license\EventSubscriber\LicenseOrderSyncSubscriber
     arguments:

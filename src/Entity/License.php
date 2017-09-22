@@ -277,7 +277,7 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['expiration_type'] = BaseFieldDefinition::create('commerce_plugin_item:commerce_license_expiration')
+    $fields['expiration_type'] = BaseFieldDefinition::create('commerce_plugin_item:recurring_period')
       ->setLabel(t('Expiration type'))
       ->setDescription(t("The configuration for calculating the license's expiry."))
       ->setCardinality(1)

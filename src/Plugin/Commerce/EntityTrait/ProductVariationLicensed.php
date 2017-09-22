@@ -35,7 +35,7 @@ class ProductVariationLicensed extends EntityTraitBase {
         'type' => 'commerce_plugin_select',
         'weight' => 20,
       ]);
-    $fields['license_expiration'] = BundleFieldDefinition::create('commerce_plugin_item:commerce_license_expiration')
+    $fields['license_expiration'] = BundleFieldDefinition::create('commerce_plugin_item:recurring_period')
       ->setLabel(t('License Expiration'))
       ->setCardinality(1)
       ->setRequired(TRUE)
