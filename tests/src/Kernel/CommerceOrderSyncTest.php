@@ -198,5 +198,3 @@ class CommerceOrderSyncTest extends CommerceKernelTestBase {
   }
 
 }
-
-
