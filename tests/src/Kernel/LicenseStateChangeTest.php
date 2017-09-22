@@ -23,6 +23,7 @@ class LicenseStateChangeTest extends KernelTestBase {
     'commerce',
     'commerce_price',
     'commerce_product',
+    'recurring_period',
     'commerce_license',
     'commerce_license_state_change_test',
   ];

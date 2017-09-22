@@ -23,6 +23,7 @@ class LicenseSetExpiryTest extends KernelTestBase {
     'commerce',
     'commerce_price',
     'commerce_product',
+    'recurring_period',
     'commerce_license',
     'commerce_license_simple_type',
     'commerce_license_set_expiry_test',

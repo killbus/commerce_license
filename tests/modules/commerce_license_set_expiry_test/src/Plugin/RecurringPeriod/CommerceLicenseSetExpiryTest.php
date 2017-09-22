@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\commerce_license_set_expiry_test\Plugin\Commerce\LicenseExpiration;
+namespace Drupal\commerce_license_set_expiry_test\Plugin\RecurringPeriod;
 
-use Drupal\commerce_license\Plugin\Commerce\LicenseExpiration\LicenseExpirationBase;
+use Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodBase;
 
 /**
- * @CommerceLicenseExpiration(
+ * @RecurringPeriod(
  *   id = "commerce_license_set_expiry_test",
  *   label = @Translation("Set expiry test"),
  *   description = @Translation("Set expiry test"),
  * )
  */
-class CommerceLicenseSetExpiryTest extends LicenseExpirationBase {
+class CommerceLicenseSetExpiryTest extends RecurringPeriodBase {
 
   /**
    * {@inheritdoc}

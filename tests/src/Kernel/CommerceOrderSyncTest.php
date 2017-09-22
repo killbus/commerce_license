@@ -44,6 +44,7 @@ class CommerceOrderSyncTest extends CommerceKernelTestBase {
     'state_machine',
     'commerce_product',
     'commerce_order',
+    'recurring_period',
     'commerce_license',
     'commerce_license_simple_type',
   ];

@@ -23,6 +23,7 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
     'commerce',
     'commerce_price',
     'commerce_product',
+    'recurring_period',
     'commerce_license',
   ];
 
