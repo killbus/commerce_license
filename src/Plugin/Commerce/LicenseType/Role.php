@@ -41,7 +41,7 @@ class Role extends LicenseTypeBase {
    */
   public function grantLicense(LicenseInterface $license) {
     // Get the role ID that this license grants.
-    $role_id = $license->license_role->first()->target_id;
+    $role_id = $license->license_role->target_id;
 
     // Get the owner of the license and grant them the role.
     $owner = $license->getOwner();

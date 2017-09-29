@@ -19,6 +19,7 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
   public static $modules = [
     'system',
     'user',
+    'entity',
     'state_machine',
     'commerce',
     'commerce_price',
@@ -45,6 +46,15 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
 
     $this->installEntitySchema('commerce_product_variation');
     $this->installEntitySchema('commerce_license');
+    $this->installConfig('user');
+
+    // Install the bundle plugins for the license entity type which this
+    // module provides. This takes care of creating the fields which the bundle
+    // plugins define.
+    $this->container->get('entity.bundle_plugin_installer')->installBundles(
+      $this->container->get('entity_type.manager')->getDefinition('commerce_license'),
+      ['commerce_license']
+    );
 
     $this->licenseStorage = $this->container->get('entity_type.manager')->getStorage('commerce_license');
     $this->roleStorage = $this->container->get('entity_type.manager')->getStorage('user_role');
