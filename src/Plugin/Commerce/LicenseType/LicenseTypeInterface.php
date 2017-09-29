@@ -66,9 +66,14 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
   /**
    * Copy configuration values to a license entity.
    *
-   * This does not save the license.
+   * This does not save the license; it is the caller's responsibility to do so.
+   *
+   * This should only be called on a plugin which has configuration. It should
+   * not be called on a plugin obtained from LicenseInterface::getTypePlugin(),
+   * as that has no configuration.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
+   *    The license entity.
    */
   public function setConfigurationValuesOnLicense(LicenseInterface $license);
 
