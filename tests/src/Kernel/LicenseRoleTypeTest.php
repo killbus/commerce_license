@@ -34,6 +34,11 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
   protected $licenseStorage;
 
   /**
+   * The license type plugin manager.
+   */
+  protected $licenseTypeManager;
+
+  /**
    * The role storage.
    */
   protected $roleStorage;
@@ -56,6 +61,7 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
       ['commerce_license']
     );
 
+    $this->licenseTypeManager = $this->container->get('plugin.manager.commerce_license_type');
     $this->licenseStorage = $this->container->get('entity_type.manager')->getStorage('commerce_license');
     $this->roleStorage = $this->container->get('entity_type.manager')->getStorage('user_role');
   }
@@ -63,7 +69,7 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
   /**
    * Tests that a role license grants and revokes a role from its owner.
    */
-  public function testRoleLicense() {
+  public function testLicenseGrantRevoke() {
     $role = $this->roleStorage->create(['id' => 'licensed_role']);
     $role->save();
 
@@ -104,6 +110,43 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
     // Assert the user does not have the role.
     $license_owner = $this->reloadEntity($license_owner);
     $this->assertFalse($license_owner->hasRole('licensed_role'), "The user does not have the licensed role.");
+  }
+
+  /**
+   * Tests a license receives field values from a configured plugin.
+   */
+  public function testLicenseCreationFromPlugin() {
+    $role = $this->roleStorage->create(['id' => 'licensed_role']);
+    $role->save();
+
+    $license_owner = $this->createUser();
+
+    // Create a license which doesn't have any type-specific field values set.
+    $license = $this->licenseStorage->create([
+      'type' => 'role',
+      'state' => 'new',
+      'product' => 1,
+      'uid' => $license_owner->id(),
+      'license_expiration' => [
+        'target_plugin_id' => 'unlimited',
+        'target_plugin_configuration' => [],
+      ],
+    ]);
+    $license->save();
+
+    // Create a configured role license plugin.
+    $plugin_configuration = [
+      'license_role' => $role->id(),
+    ];
+    $license_type_plugin = $this->licenseTypeManager->createInstance('role', $plugin_configuration);
+
+    // Set the license's type-specific fields from the configured plugin.
+    $license->setValuesFromPlugin($license_type_plugin);
+
+    $license->save();
+    $license = $this->reloadEntity($license);
+
+    $this->assertEquals($role->id(), $license->license_role->target_id, "The role field was set on the license.");
   }
 
 }
