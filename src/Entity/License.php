@@ -226,7 +226,7 @@ class License extends ContentEntityBase implements LicenseInterface {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('OWner'))
+      ->setLabel(t('Owner'))
       ->setDescription(t('The user ID of the license owner.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
