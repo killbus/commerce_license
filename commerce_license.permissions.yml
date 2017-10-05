@@ -8,6 +8,12 @@ administer licenses:
   description: 'Allowed to manage license entities in administrative mode.'
   restrict access: true
 
+# Permission in the same pattern as those provided by Entity API, to ease
+# switchover in https://www.drupal.org/node/2914085.
+access commerce_license overview:
+  title: 'Access the License overview page'
+  restrict access: true
+
 edit own licenses:
   title: 'Edit licenses'
 

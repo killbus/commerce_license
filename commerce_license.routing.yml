@@ -5,11 +5,3 @@ entity.commerce_license.create_form:
     _title: 'Create license'
   requirements:
     _permission: 'administer licenses'
-
-entity.commerce_license.collection:
-  path: '/admin/commerce/licenses'
-  defaults:
-    _entity_list: 'commerce_license'
-    _title: 'Licenses'
-  requirements:
-    _permission: 'administer licenses'

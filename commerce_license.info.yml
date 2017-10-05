@@ -10,3 +10,6 @@ dependencies:
   - commerce_product
   - state_machine
   - recurring_period
+config_devel:
+  install:
+    - views.view.commerce_licenses
