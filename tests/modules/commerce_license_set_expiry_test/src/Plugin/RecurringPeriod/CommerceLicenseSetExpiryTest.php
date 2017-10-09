@@ -16,9 +16,9 @@ class CommerceLicenseSetExpiryTest extends RecurringPeriodBase {
   /**
    * {@inheritdoc}
    */
-  public function calculateDate($start) {
-    // Return a fixed timestamp that we can test.
-    return 12345;
+  public function calculateDate(\DateTimeImmutable $start) {
+    // Return a fixed date & time that we can test.
+    return new \DateTimeImmutable('@12345', new \DateTimeZone('UTC'));
   }
 
 }

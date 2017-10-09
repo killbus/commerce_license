@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\commerce_license\Kernel;
 
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 
 /**
  * Tests that a license gets its expiry date set when activated.
  *
  * @group commerce_license
  */
-class LicenseSetExpiryTest extends KernelTestBase {
+class LicenseSetExpiryTest extends EntityKernelTestBase {
 
   /**
    * The modules to enable.
@@ -40,6 +40,7 @@ class LicenseSetExpiryTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    $this->installEntitySchema('user');
     $this->installEntitySchema('commerce_product_variation');
     $this->installEntitySchema('commerce_license');
 
@@ -50,12 +51,14 @@ class LicenseSetExpiryTest extends KernelTestBase {
    * Tests a license has its expiry date set from the expiry plugin.
    */
   public function testLicenseSetExpiry() {
+    $owner = $this->createUser();
+
     // Create a license in the 'new' state, without an expiration timestamp.
     $license = $this->licenseStorage->create([
       'type' => 'simple',
       'state' => 'new',
       'product' => 1,
-      'uid' => 1,
+      'uid' => $owner->id(),
       // Use our test expiration plugin.
       'expiration_type' => [
         'target_plugin_id' => 'commerce_license_set_expiry_test',

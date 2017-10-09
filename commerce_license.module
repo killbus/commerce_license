@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_help().
@@ -153,4 +154,30 @@ function commerce_license_theme_suggestions_commerce_license(array $variables) {
   $suggestions[] = 'commerce_license__' . $entity->id();
   $suggestions[] = 'commerce_license__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
+}
+
+/**
+ * Gets the timezone for the given user.
+ *
+ * Helper function equivalent to drupal_get_user_timezone() but accepting
+ * an arbitrary user object as a parameter, rather than assuming the
+ * current user.
+ *
+ * @param \Drupal\Core\Session\AccountInterface $user
+ *    A user account.
+ *
+ * @return string
+ *    The timezone name.
+ */
+function commerce_licence_get_user_timezone(AccountInterface $user) {
+  $config = \Drupal::config('system.date');
+  if ($user && $config->get('timezone.user.configurable') && $user->isAuthenticated() && $user->getTimezone()) {
+    return $user->getTimezone();
+  }
+  else {
+    // Ignore PHP strict notice if time zone has not yet been set in the php.ini
+    // configuration.
+    $config_data_default_timezone = $config->get('timezone.default');
+    return !empty($config_data_default_timezone) ? $config_data_default_timezone : @date_default_timezone_get();
+  }
 }

@@ -167,11 +167,30 @@ class License extends ContentEntityBase implements LicenseInterface {
    *   The timestamp to calculate the duration from.
    *
    * @return int
-   *   The expiry timestamp.
+   *   The expiry timestamp, or the value
+   *   \Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodInterface::UNLIMITED
+   *   if the license does not expire.
    */
   protected function calculateExpirationTime($start) {
+    /** @var \Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodInterface $expiration_type_plugin */
     $expiration_type_plugin = $this->get('expiration_type')->first()->getTargetInstance();
-    return $expiration_type_plugin->calculateDate($start);
+
+    // The recurring period plugin needs DateTimeImmutable objects in order
+    // to handle timezones properly. So we convert the timestamp to a datetime
+    // using an appropriate timezone for the user, and then convert the
+    // expiration back into a UTC timestamp.
+    $start_date = (new \DateTimeImmutable('@' . $start))
+      ->setTimezone(new \DateTimeZone(commerce_licence_get_user_timezone($this->getOwner())));
+    $expiration_date = $expiration_type_plugin->calculateDate($start_date);
+
+    // The returned date is either \DateTimeImmutable or
+    // \Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodInterface::UNLIMITED.
+    if (is_object($expiration_date)) {
+      return $expiration_date->format('U');
+    }
+    else {
+      return $expiration_date;
+    }
   }
 
   /**

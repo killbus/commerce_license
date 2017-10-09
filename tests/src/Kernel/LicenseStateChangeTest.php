@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\commerce_license\Kernel;
 
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 
 /**
  * Tests changes to the license state have the correct effects.
  *
  * @group commerce_license
  */
-class LicenseStateChangeTest extends KernelTestBase {
+class LicenseStateChangeTest extends EntityKernelTestBase {
 
   /**
    * The modules to enable.
@@ -39,6 +39,7 @@ class LicenseStateChangeTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    $this->installEntitySchema('user');
     $this->installEntitySchema('commerce_product_variation');
     $this->installEntitySchema('commerce_license');
 
@@ -49,12 +50,14 @@ class LicenseStateChangeTest extends KernelTestBase {
    * Tests that exceptions thrown by workers are handled properly.
    */
   public function testLicenseStateChanges() {
+    $owner = $this->createUser();
+
     // Create a license in the 'new' state.
     $license = $this->licenseStorage->create([
       'type' => 'commerce_license_state_change_test',
       'state' => 'new',
       'product' => 1,
-      'uid' => 1,
+      'uid' => $owner->id(),
       // Use the unlimited expiry plugin as it's simple.
       'expiration_type' => [
         'target_plugin_id' => 'unlimited',
