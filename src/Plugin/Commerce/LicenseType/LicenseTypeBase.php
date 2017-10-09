@@ -59,6 +59,16 @@ abstract class LicenseTypeBase extends PluginBase implements LicenseTypeInterfac
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    // This assumes that for each property defined in defaultConfiguration(),
+    // there is a form element of the same name, and saves its value into
+    // that configuration property.
+    $values = $form_state->getValue($form['#parents']);
+
+    $property_names = array_keys($this->defaultConfiguration());
+
+    foreach ($property_names as $property) {
+      $this->configuration[$property] = $values[$property];
+    }
   }
 
   /**
