@@ -77,6 +77,14 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
+  public function label() {
+    // Get the label for the license from the plugin.
+    return $this->getTypePlugin()->buildLabel($this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
 

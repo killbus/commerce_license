@@ -21,7 +21,7 @@ class File extends LicenseTypeBase {
    */
   public function buildLabel(LicenseInterface $license) {
     $args = [
-      '@id' => $license->license_id,
+      '@id' => $license->license_id->value,
     ];
     return $this->t('File license (@id)', $args);
   }
