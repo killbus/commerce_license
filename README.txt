@@ -21,4 +21,7 @@ This module requires the following modules:
 
  * Commerce (https://drupal.org/project/commerce)
  * Recurring Period (https://drupal.org/project/recurring_period)
- 
+
+The following patches are also necessary:
+
+- https://www.drupal.org/node/2080745#comment-12306682
