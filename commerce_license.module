@@ -63,7 +63,87 @@ function commerce_license_form_commerce_product_variation_type_form_alter(&$form
     array_slice($form, $traits_element_form_array_index + 1)
   );
 
+  $form['#validate'][] = 'commerce_license_form_commerce_product_variation_type_form_validate';
+
   $form['actions']['submit']['#submit'][] = 'commerce_license_form_commerce_product_variation_type_form_submit';
+}
+
+/**
+ * Form validation handler to ensure everything joins up for license traits.
+ *
+ * @see commerce_license_form_commerce_product_variation_type_form_alter()
+ */
+function commerce_license_form_commerce_product_variation_type_form_validate($form, FormStateInterface $form_state) {
+  $traits = $form_state->getValue('traits');
+  $original_traits = $form_state->getValue('original_traits');
+
+  // Only validate if our trait is in use. Need to check both new traits and
+  // existing traits values, as the 'traits' form value won't have a value for
+  // a checkbox that's disabled because an existing trait can't be removed.
+  if (empty($traits['commerce_license']) && !in_array('commerce_license', $original_traits)) {
+    return;
+  }
+
+  // The order item type must have the license trait.
+  $order_item_type_id = $form_state->getValue('orderItemType');
+  $order_item_type = \Drupal::entityTypeManager()->getStorage('commerce_order_item_type')->load($order_item_type_id);
+
+  if (!in_array('commerce_license_order_item_type', $order_item_type->getTraits())) {
+    $form_state->setError($form['orderItemType'], t(
+      'The License trait requires an order item type with the order item license trait. ' .
+      'This product variation is set to use the @order-item-type-label order item type. You must either change this, or <a href="@url-edit-order-item-type">edit the order item type</a> to add the license trait.',
+      [
+        '@order-item-type-label' => $order_item_type->label(),
+        '@url-edit-order-item-type' => $order_item_type->toUrl('edit-form')->toString(),
+      ]
+    ));
+  }
+
+  // The order must use a workflow with a fulfilment state.
+  $order_type_id = $order_item_type->getOrderTypeId();
+  $order_type = \Drupal::entityTypeManager()->getStorage('commerce_order_type')->load($order_type_id);
+  $workflow_id = $order_type->getWorkflowId();
+  $workflow = \Drupal::service('plugin.manager.workflow')->createInstance($workflow_id);
+  $states = $workflow->getStates();
+  if (!isset($states['fulfillment'])) {
+    $form_state->setError($form['orderItemType'], t(
+      "The License trait requires an order workflow with the 'fulfillment' state. " .
+      'This product variation is set to use the @order-item-type-label order item type, ' .
+      'which is set to use the @order-type-label order type, ' .
+      'which is set to use the @workflow-label workflow. ' .
+      'You must either change this, or <a href="@url-edit-order-type">edit the order type</a> to change the workflow.',
+      [
+        '@order-item-type-label' => $order_item_type->label(),
+        '@order-type-label' => $order_type->label(),
+        '@workflow-label' => $workflow->getLabel(),
+        '@url-edit-order-type' => $order_type->toUrl('edit-form')->toString(),
+      ]
+    ));
+  }
+
+  // The checkout flow may not allow anonymous checkout.
+  $checkout_flow_id = $order_type->getThirdPartySetting('commerce_checkout', 'checkout_flow');
+  if ($checkout_flow_id) {
+    $checkout_flow = \Drupal::entityTypeManager()->getStorage('commerce_checkout_flow')->load($checkout_flow_id);
+    $login_pane_configuration = $checkout_flow->get('configuration')['panes']['login'];
+    if ($login_pane_configuration['step'] != '_disabled') {
+      if ($login_pane_configuration['allow_guest_checkout']) {
+        $form_state->setError($form['orderItemType'], t(
+          "The License trait requires a checkout flow that does not allow guest checkout. " .
+          'This product variation is set to use the @order-item-type-label order item type, ' .
+          'which is set to use the @order-type-label order type, ' .
+          'which is set to use the @flow-label checkout flow. ' .
+          'You must either change this, or <a href="@url-checkout-flow">edit the checkout flow</a>.',
+          [
+            '@order-item-type-label' => $order_item_type->label(),
+            '@order-type-label' => $order_type->label(),
+            '@flow-label' => $checkout_flow->label(),
+            '@url-checkout-flow' => $checkout_flow->toUrl('edit-form')->toString(),
+          ]
+        ));
+      }
+    }
+  }
 }
 
 /**
