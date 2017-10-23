@@ -4,8 +4,11 @@ namespace Drupal\commerce_license\Plugin\Commerce\LicenseType;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
 use Drupal\commerce\BundleFieldDefinition;
+use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_license\Entity\LicenseInterface;
+use Drupal\commerce_license\ExistingRights\ExistingRightsResult;
 
 /**
  * Provides a license type which grants one or more roles.
@@ -15,7 +18,7 @@ use Drupal\commerce_license\Entity\LicenseInterface;
  *   label = @Translation("Role"),
  * )
  */
-class Role extends LicenseTypeBase {
+class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationCheckingInterface {
 
   /**
    * {@inheritdoc}
@@ -66,6 +69,25 @@ class Role extends LicenseTypeBase {
     $owner->save();
 
     // TODO: Log this, as it's something admins should see?
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkUserHasExistingRights(UserInterface $user) {
+    $role_id = $this->configuration['license_role'];
+    $role = \Drupal::service('entity_type.manager')->getStorage('user_role')->load($role_id);
+
+    return ExistingRightsResult::rightsExistIf(
+      $user->hasRole($role_id),
+      $this->t("You already have the @role-label role.", [
+        '@role-label' => $role->label(),
+      ]),
+      $this->t("User @user already has the @role-label role.", [
+        '@user' => $user->getDisplayName(),
+        '@role-label' => $role->label(),
+      ])
+    );
   }
 
   /**

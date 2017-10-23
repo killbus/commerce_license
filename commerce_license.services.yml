@@ -17,3 +17,9 @@ services:
     class: Drupal\commerce_license\LicenseOrderProcessorMultiples
     tags:
       - { name: commerce_order.order_processor }
+  commerce_license.license_availability_checker_existing:
+    class: Drupal\commerce_license\LicenseAvailabilityCheckerExistingRights
+    arguments:
+      - '@current_user'
+    tags:
+      - { name: commerce.availability_checker }
