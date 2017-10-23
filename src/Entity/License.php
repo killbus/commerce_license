@@ -67,16 +67,6 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    parent::preCreate($storage_controller, $values);
-    $values += array(
-      'uid' => \Drupal::currentUser()->id(),
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function label() {
     // Get the label for the license from the plugin.
     return $this->getTypePlugin()->buildLabel($this);
