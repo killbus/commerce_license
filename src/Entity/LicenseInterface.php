@@ -7,7 +7,7 @@ use Drupal\user\EntityOwnerInterface;
 use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
 
 /**
- * Provides an interface for defining License entities.
+ * Provides an interface for License entities.
  *
  * @ingroup commerce_license
  */
