@@ -6,8 +6,8 @@ package: Commerce
 configure: entity.commerce_license.collection
 dependencies:
   - commerce
-  - commerce_checkout
-  - commerce_product
+  - commerce:commerce_checkout
+  - commerce:commerce_product
   - state_machine
   - recurring_period
 config_devel:
