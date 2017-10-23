@@ -39,7 +39,7 @@ function commerce_license_form_commerce_product_variation_type_form_alter(&$form
   $our_form['license_types'] = [
     '#type' => 'checkboxes',
     '#title' => t("Available license types"),
-    '#description' => t("Limit the license types that can be used on products of this type. All types will be allowed if none are selected."),
+    '#description' => t("Limit the license types that can be used on product variations of this type. All types will be allowed if none are selected."),
     '#options' => $options,
     '#default_value' => $variation_type->getThirdPartySetting('commerce_license', 'license_types') ?: [],
     // Only show this if the license trait is set on the product variation type.
