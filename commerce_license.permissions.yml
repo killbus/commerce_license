@@ -5,7 +5,7 @@ create licenses:
 
 administer licenses:
   title: 'Administer License entities'
-  description: 'Allowed to manage license entities in administrative mode.'
+  description: 'Create, edit, and delete all licenses.'
   restrict access: true
 
 # Permission in the same pattern as those provided by Entity API, to ease
