@@ -6,6 +6,8 @@ use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\commerce_license\Annotation\CommerceLicenseType;
+use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
 
 /**
  * Manages discovery and instantiation of license type plugins.
@@ -31,8 +33,8 @@ class LicenseTypeManager extends DefaultPluginManager {
       'Plugin/Commerce/LicenseType',
       $namespaces,
       $module_handler,
-      'Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface',
-      'Drupal\commerce_license\Annotation\CommerceLicenseType'
+      LicenseTypeInterface::class,
+      CommerceLicenseType::class
     );
 
     $this->alterInfo('commerce_license_type_info');
