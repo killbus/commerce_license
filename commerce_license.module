@@ -5,9 +5,12 @@
  * Contains commerce_license.module.
  */
 
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\commerce_license\Plugin\Commerce\LicenseType\GrantedEntityLockingInterface;
 
 /**
  * Implements hook_help().
@@ -22,6 +25,55 @@ function commerce_license_help($route_name, RouteMatchInterface $route_match) {
       return $output;
 
     default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function commerce_license_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Allow license type plugins that implement
+  // Drupal\commerce_license\Plugin\Commerce\LicenseType\GrantedEntityLockingInterface
+  // to alter forms for entities owned by the owner of the license.
+  $form_object = $form_state->getFormObject();
+  if (!($form_object instanceof EntityFormInterface)) {
+    // We're only interested in forms for an entity.
+    return;
+  }
+
+  /** @var EntityFormInterface $form_object */
+  $entity = $form_object->getEntity();
+  $entity_type_id = $entity->getEntityTypeId();
+  if (!($entity instanceof EntityOwnerInterface) && $entity_type_id != 'user') {
+    // We only act on entities that have an owner, and user entities.
+    return;
+  }
+
+  if ($entity_type_id == 'commerce_license') {
+    // Don't act on licenses themselves.
+    return;
+  }
+
+  // Get the ID of owner of this entity, or of the user itself.
+  $user_id = ($entity_type_id == 'user') ? $entity->id() : $entity->getOwnerId();
+
+  // Get all active licenses owned by this user.
+  // Note: this assumes that users have relatively few licenses each. If
+  // scalability becomes an issue, consider instead first asking each license
+  // type plugin for which entity types it might be interested in, and then
+  // query only for those license types if there is a match with the form's
+  // entity.
+  $licenses = \Drupal::service('entity_type.manager')->getStorage('commerce_license')->loadByProperties([
+    'uid' => $user_id,
+    'state' => 'active',
+  ]);
+
+  // Let each suitable license's plugin alter the form for the license.
+  foreach ($licenses as $license) {
+    $license_type_plugin = $license->getTypePlugin();
+    if ($license_type_plugin instanceof GrantedEntityLockingInterface) {
+      $license_type_plugin->alterEntityOwnerForm($form, $form_state, $form_id, $license, $entity);
+    }
   }
 }
 

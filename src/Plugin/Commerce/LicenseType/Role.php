@@ -2,6 +2,7 @@
 
 namespace Drupal\commerce_license\Plugin\Commerce\LicenseType;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
@@ -18,7 +19,7 @@ use Drupal\commerce_license\ExistingRights\ExistingRightsResult;
  *   label = @Translation("Role"),
  * )
  */
-class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationCheckingInterface {
+class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationCheckingInterface, GrantedEntityLockingInterface {
 
   /**
    * {@inheritdoc}
@@ -88,6 +89,21 @@ class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationChe
         '@role-label' => $role->label(),
       ])
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterEntityOwnerForm(&$form, FormStateInterface $form_state, $form_id, LicenseInterface $license, EntityInterface $form_entity) {
+    if ($form_entity->getEntityTypeId() != 'user') {
+      // Only act on a user form.
+      return;
+    }
+
+    $licensed_role_id = $license->license_role->target_id;
+
+    $form['account']['roles'][$licensed_role_id]['#disabled'] = TRUE;
+    $form['account']['roles'][$licensed_role_id]['#description'] = t("This role is granted by a license. It cannot be removed manually.");
   }
 
   /**

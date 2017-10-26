@@ -3,6 +3,7 @@
 namespace Drupal\commerce_license\Plugin\Commerce\LicenseType;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\commerce_license\Entity\LicenseInterface;
