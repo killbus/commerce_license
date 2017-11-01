@@ -264,7 +264,7 @@ display:
           hide_alter_empty: true
           link_to_entity: false
           entity_type: commerce_license
-          plugin_id: entity_label
+          plugin_id: commerce_license__entity_label
         type:
           id: type
           table: commerce_license

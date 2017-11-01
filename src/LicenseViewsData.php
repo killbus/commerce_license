@@ -17,14 +17,12 @@ class LicenseViewsData extends EntityViewsData {
 
     $base_table = $this->entityType->getBaseTable() ?: $this->entityType->id();
 
-    // TODO: This needs core patch at https://www.drupal.org/node/2080745 to
-    // work properly.
     $data[$base_table]['label'] = [
       'title' => $this->t('Label'),
       'help' => $this->t('The label of the license.'),
       'real field' => 'license_id',
       'field' => [
-        'id' => 'entity_label',
+        'id' => 'commerce_license__entity_label',
       ],
     ];
 

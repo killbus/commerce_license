@@ -5,3 +5,7 @@ commerce_product.commerce_product_variation_type.*.third_party.commerce_license:
     license_types:
       type: sequence
       label: 'License types allowed with this product variation'
+
+
+views.field.commerce_license__entity_label:
+  type: views.field.entity_label
