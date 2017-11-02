@@ -5,6 +5,7 @@ core: 8.x
 package: Commerce
 configure: entity.commerce_license.collection
 dependencies:
+  - entity
   - commerce
   - commerce:commerce_checkout
   - commerce:commerce_product

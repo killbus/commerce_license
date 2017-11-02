@@ -28,7 +28,8 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *   bundle_label = @Translation("License type"),
  *   bundle_plugin_type = "commerce_license_type",
  *   handlers = {
- *     "access" = "Drupal\commerce_license\LicenseAccessControlHandler",
+ *     "access" = "\Drupal\entity\UncacheableEntityAccessControlHandler",
+ *     "permission_provider" = "\Drupal\commerce_license\LicensePermissionProvider",
  *     "list_builder" = "Drupal\commerce_license\LicenseListBuilder",
  *     "storage" = "Drupal\commerce_license\LicenseStorage",
  *     "form" = {

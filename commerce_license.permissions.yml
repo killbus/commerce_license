@@ -1,24 +1,4 @@
-create licenses:
-  title: 'Create new License entities'
-  description: 'Create licenses in administrative mode, bypassing the purchase of a product.'
-  restrict access: true
-
 administer licenses:
   title: 'Administer License entities'
   description: 'Create, edit, and delete all licenses.'
   restrict access: true
-
-# Permission in the same pattern as those provided by Entity API, to ease
-# switchover in https://www.drupal.org/node/2914085.
-access commerce_license overview:
-  title: 'Access the License overview page'
-  restrict access: true
-
-edit own licenses:
-  title: 'Edit licenses'
-
-view own licenses:
-  title: 'View own licenses'
-
-view all licenses:
-  title: 'View all licenses'
