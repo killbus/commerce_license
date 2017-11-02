@@ -41,7 +41,7 @@ function commerce_license_form_alter(&$form, FormStateInterface $form_state, $fo
     return;
   }
 
-  /** @var EntityFormInterface $form_object */
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
   $entity = $form_object->getEntity();
   $entity_type_id = $entity->getEntityTypeId();
   if (!($entity instanceof EntityOwnerInterface) && $entity_type_id != 'user') {
@@ -54,8 +54,19 @@ function commerce_license_form_alter(&$form, FormStateInterface $form_state, $fo
     return;
   }
 
+  if ($entity->isNew()) {
+    // Don't act on a new entity, as it can't be the target of a license.
+    return;
+  }
+
   // Get the ID of owner of this entity, or of the user itself.
   $user_id = ($entity_type_id == 'user') ? $entity->id() : $entity->getOwnerId();
+
+  if (is_null($user_id)) {
+    // Bail if we didn't manage to get a user ID. Shouldn't get this far but
+    // some forms might misbehave.
+    return;
+  }
 
   // Get all active licenses owned by this user.
   // Note: this assumes that users have relatively few licenses each. If
