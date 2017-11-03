@@ -74,7 +74,7 @@ class LicenseSetExpiryTest extends EntityKernelTestBase {
     $license->save();
 
     // Check the expiration timestamp is not yet set.
-    $this->assertEqual($license->expiration->value, 0);
+    $this->assertEqual($license->expires->value, 0);
 
     // Confirm the license: this puts it into the 'active' state.
     $transition = $license->getState()->getWorkflow()->getTransition('confirm');
@@ -82,7 +82,7 @@ class LicenseSetExpiryTest extends EntityKernelTestBase {
     $license->save();
 
     // Check the expiration timestamp is now set.
-    $this->assertEqual($license->expiration->value, 12345);
+    $this->assertEqual($license->expires->value, 12345);
   }
 
 }

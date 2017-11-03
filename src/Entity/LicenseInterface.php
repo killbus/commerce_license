@@ -33,6 +33,25 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function setCreatedTime($timestamp);
 
   /**
+   * Gets the License expiration timestamp.
+   *
+   * @return int
+   *   Expiration timestamp of the License.
+   */
+  public function getExpiresTime();
+
+  /**
+   * Sets the License expiration timestamp.
+   *
+   * @param int $timestamp
+   *   The License expiration timestamp.
+   *
+   * @return \Drupal\commerce_license\Entity\LicenseInterface
+   *   The called License entity.
+   */
+  public function setExpiresTime($timestamp);
+
+  /**
    * Get an unconfigured instance of the associated license type plugin.
    *
    * @return \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface

@@ -89,7 +89,7 @@ class License extends ContentEntityBase implements LicenseInterface {
         $granted_time = \Drupal::service('datetime.time')->getRequestTime();
 
         $this->set('granted', $granted_time);
-        $this->set('expiration', $this->calculateExpirationTime($granted_time));
+        $this->setExpiresTime($this->calculateExpirationTime($granted_time));
       }
     }
   }
@@ -142,6 +142,21 @@ class License extends ContentEntityBase implements LicenseInterface {
    */
   public function setValuesFromPlugin(LicenseTypeInterface $license_plugin) {
     $license_plugin->setConfigurationValuesOnLicense($this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExpiresTime() {
+    return $this->get('expires')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setExpiresTime($timestamp) {
+    $this->set('expires', $timestamp);
+    return $this;
   }
 
   /**
@@ -329,8 +344,8 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the license was last modified.'));
 
-    $fields['expiration'] = BaseFieldDefinition::create('timestamp')
-      ->setLabel(t('Expiration'))
+    $fields['expires'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(t('Expires'))
       ->setDescription(t('The time that the license will expire, if any.'))
       ->setDisplayOptions('view', [
         'label' => 'hidden',
@@ -343,11 +358,6 @@ class License extends ContentEntityBase implements LicenseInterface {
       ])
       ->setDisplayConfigurable('view', TRUE)
       ->setDefaultValue(0);
-
-    $fields['autoexpire'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Automatic expiration'))
-      ->setDescription(t('Whether or not the license will automatically expire.'))
-      ->setDefaultValue(TRUE);
 
     return $fields;
   }
