@@ -25,7 +25,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
     'commerce_product',
     'recurring_period',
     'commerce_license',
-    'commerce_license_state_change_test',
+    'commerce_license_test',
   ];
 
   /**
@@ -54,7 +54,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
 
     // Create a license in the 'new' state.
     $license = $this->licenseStorage->create([
-      'type' => 'commerce_license_state_change_test',
+      'type' => 'state_change_test',
       'state' => 'new',
       'product' => 1,
       'uid' => $owner->id(),
@@ -120,7 +120,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
 
     // Test creating a license initially in the active state.
     $license = $this->licenseStorage->create([
-      'type' => 'commerce_license_state_change_test',
+      'type' => 'state_change_test',
       'state' => 'active',
       'product' => 1,
       'uid' => 1,

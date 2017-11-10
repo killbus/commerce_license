@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\commerce_license_state_change_test\Plugin\Commerce\LicenseType;
+namespace Drupal\commerce_license_test\Plugin\Commerce\LicenseType;
 
 use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeBase;
 use Drupal\commerce_license\Entity\LicenseInterface;
 
 /**
  * @CommerceLicenseType(
- *   id = "commerce_license_state_change_test",
+ *   id = "state_change_test",
  *   label = @Translation("State change test"),
  * )
  */
-class CommerceLicenseStateChangeTest extends LicenseTypeBase {
+class LicenseStateChangeTest extends LicenseTypeBase {
 
   /**
    * {@inheritdoc}
