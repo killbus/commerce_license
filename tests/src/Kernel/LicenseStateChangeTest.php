@@ -47,7 +47,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
   }
 
   /**
-   * Tests that exceptions thrown by workers are handled properly.
+   * Tests that changes to a license's state causes the plugin to react.
    */
   public function testLicenseStateChanges() {
     $owner = $this->createUser();
