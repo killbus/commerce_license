@@ -79,7 +79,7 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
     $license = $this->licenseStorage->create([
       'type' => 'role',
       'state' => 'new',
-      'product' => 1,
+      'product_variation' => 1,
       'uid' => $license_owner->id(),
       // Use the unlimited expiry plugin as it's simple.
       'expiration_type' => [
@@ -125,7 +125,7 @@ class LicenseRoleTypeTest extends EntityKernelTestBase {
     $license = $this->licenseStorage->create([
       'type' => 'role',
       'state' => 'new',
-      'product' => 1,
+      'product_variation' => 1,
       'uid' => $license_owner->id(),
       'expiration_type' => [
         'target_plugin_id' => 'unlimited',

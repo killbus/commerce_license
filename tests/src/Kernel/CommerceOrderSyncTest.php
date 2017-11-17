@@ -162,7 +162,7 @@ class CommerceOrderSyncTest extends CommerceKernelTestBase {
     $this->assertEquals('commerce_license', $license->getEntityTypeId(), 'The order item has a license entity set in its license field.');
     $this->assertEquals('simple', $license->bundle(), 'The license entity is of the expected type.');
     $this->assertEquals($customer->id(), $license->getOwnerId(), 'The license entity has the expected owner.');
-    $this->assertEquals($this->variation->id(), $license->product->target_id, 'The license entity references the product variation.');
+    $this->assertEquals($this->variation->id(), $license->product_variation->target_id, 'The license entity references the product variation.');
     $this->assertEquals('active', $license->state->value, 'The license is active.');
 
     // Note that we don't need to check that the license has activated its

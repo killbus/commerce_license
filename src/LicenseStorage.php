@@ -30,7 +30,7 @@ class LicenseStorage extends CommerceContentEntityStorage implements LicenseStor
     $license = $this->create([
       'type' => $license_type_plugin->getPluginId(),
       'state' => 'new',
-      'product' => $purchased_entity->id(),
+      'product_variation' => $purchased_entity->id(),
       // Take the license owner from the order, for the case when orders are
       // created for another user.
       'uid' => $order_item->getOrder()->uid,

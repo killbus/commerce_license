@@ -56,7 +56,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
     $license = $this->licenseStorage->create([
       'type' => 'state_change_test',
       'state' => 'new',
-      'product' => 1,
+      'product_variation' => 1,
       'uid' => $owner->id(),
       // Use the unlimited expiry plugin as it's simple.
       'expiration_type' => [
@@ -122,7 +122,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
     $license = $this->licenseStorage->create([
       'type' => 'state_change_test',
       'state' => 'active',
-      'product' => 1,
+      'product_variation' => 1,
       'uid' => 1,
       'expiration_type' => [
         'target_plugin_id' => 'unlimited',

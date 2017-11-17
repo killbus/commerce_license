@@ -56,7 +56,7 @@ class LicenseDeletionTest extends EntityKernelTestBase {
     $license = $this->licenseStorage->create([
       'type' => 'state_change_test',
       'state' => 'active',
-      'product' => 1,
+      'product_variation' => 1,
       'uid' => $owner->id(),
       // Use the unlimited expiry plugin as it's simple.
       'expiration_type' => [

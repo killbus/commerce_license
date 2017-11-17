@@ -57,7 +57,7 @@ class LicenseSetExpiryTest extends EntityKernelTestBase {
     $license = $this->licenseStorage->create([
       'type' => 'simple',
       'state' => 'new',
-      'product' => 1,
+      'product_variation' => 1,
       'uid' => $owner->id(),
       // Use our test expiration plugin.
       'expiration_type' => [

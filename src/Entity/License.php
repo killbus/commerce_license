@@ -293,9 +293,9 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE);
 
-    $fields['product'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Licensed product'))
-      ->setDescription(t('The licensed product.'))
+    $fields['product_variation'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Licensed product variation'))
+      ->setDescription(t('The licensed product variation.'))
       ->setRequired(TRUE)
       ->setSetting('target_type', 'commerce_product_variation')
       ->setDisplayOptions('form', [
