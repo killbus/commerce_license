@@ -2,7 +2,7 @@ name: Commerce License
 type: module
 description: Provides a framework for selling access to local or remote resources.
 core: 8.x
-package: Commerce
+package: 'Commerce (contrib)'
 configure: entity.commerce_license.collection
 dependencies:
   - entity
