@@ -7,6 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_license\Entity\LicenseInterface;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 
 /**
  * Defines the storage handler class for License entities.
@@ -24,19 +25,30 @@ class LicenseStorage extends CommerceContentEntityStorage implements LicenseStor
   public function createFromOrderItem(OrderItemInterface $order_item) {
     $purchased_entity = $order_item->getPurchasedEntity();
 
-    // TODO: throw an exception if the purchased entity doesn't have this field.
-    $license_type_plugin = $purchased_entity->get('license_type')->first()->getTargetInstance();
+    // Take the license owner from the order, for the case when orders are
+    // created for another user.
+    $uid = $order_item->getOrder()->getCustomerId();
+
+    $license = $this->createFromProductVariation($purchased_entity, $uid);
+
+    return $license;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createFromProductVariation(ProductVariationInterface $variation, int $uid) {
+    // TODO: throw an exception if the variation doesn't have this field.
+    $license_type_plugin = $variation->get('license_type')->first()->getTargetInstance();
 
     $license = $this->create([
       'type' => $license_type_plugin->getPluginId(),
       'state' => 'new',
-      'product_variation' => $purchased_entity->id(),
-      // Take the license owner from the order, for the case when orders are
-      // created for another user.
-      'uid' => $order_item->getOrder()->uid,
-      // Take the expiration type configuration from the purchased entity's
+      'product_variation' => $variation->id(),
+      'uid' => $uid,
+      // Take the expiration type configuration from the product variation
       // expiration field.
-      'expiration_type' => $purchased_entity->license_expiration,
+      'expiration_type' => $variation->license_expiration,
     ]);
 
     // Set the license's plugin-specific configuration from the
