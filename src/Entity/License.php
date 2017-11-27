@@ -86,10 +86,20 @@ class License extends ContentEntityBase implements LicenseInterface {
     // (Note that $this->original is not set on new entities.)
     if ((isset($this->original) && $this->state->value != $this->original->state->value) || !isset($this->original)) {
       if ($this->state->value == 'active') {
-        $granted_time = \Drupal::service('datetime.time')->getRequestTime();
+        $activation_time = \Drupal::service('datetime.time')->getRequestTime();
 
-        $this->set('granted', $granted_time);
-        $this->setExpiresTime($this->calculateExpirationTime($granted_time));
+        if (empty($this->get('granted'))) {
+          // The license has not previously been granted, and is therefore being
+          // activated for the first time. Set the 'granted' timestamp.
+          $this->set('granted', $activation_time);
+        }
+        else {
+          // The license has previously been granted, and is therefore being
+          // re-activated after a lapse. Set the 'renewed' timestamp.
+          $this->setRenewedTime($activation_time);
+        }
+
+        $this->setExpiresTime($this->calculateExpirationTime($activation_time));
       }
     }
   }
@@ -156,6 +166,21 @@ class License extends ContentEntityBase implements LicenseInterface {
    */
   public function setExpiresTime($timestamp) {
     $this->set('expires', $timestamp);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRenewedTime() {
+    return $this->get('renewed')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRenewedTime($timestamp) {
+    $this->set('renewed', $timestamp);
     return $this;
   }
 
@@ -327,7 +352,22 @@ class License extends ContentEntityBase implements LicenseInterface {
 
     $fields['granted'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Granted'))
-      ->setDescription(t('The time that the license was granted or activated.'))
+      ->setDescription(t('The time that the license was first granted or activated.'))
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'timestamp',
+        'weight' => 1,
+        'settings' => [
+          'date_format' => 'custom',
+          'custom_date_format' => 'n/Y',
+        ],
+      ])
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDefaultValue(0);
+
+    $fields['renewed'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(t('Renewed'))
+      ->setDescription(t('The time that the license was most recently renewed.'))
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'timestamp',
