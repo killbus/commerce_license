@@ -35,13 +35,13 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *     "form" = {
  *       "default" = "Drupal\commerce_license\Form\LicenseForm",
  *       "checkout" = "Drupal\commerce_license\Form\LicenseCheckoutForm",
- *       "create" = "Drupal\commerce_license\Form\LicenseCreateForm",
+ *       "add" = "Drupal\commerce_license\Form\LicenseCreateForm",
  *       "edit" = "Drupal\commerce_license\Form\LicenseForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
  *     },
  *     "views_data" = "Drupal\commerce_license\LicenseViewsData",
  *     "route_provider" = {
- *       "default" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
+ *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     },
  *   },
  *   base_table = "commerce_license",
@@ -55,7 +55,7 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *   },
  *   links = {
  *     "canonical" = "/admin/commerce/licenses/{commerce_license}",
- *     "create-form" = "/admin/commerce/licenses/create",
+ *     "add-form" = "/admin/commerce/licenses/create",
  *     "edit-form" = "/admin/commerce/licenses/{commerce_license}/edit",
  *     "delete-form" = "/admin/commerce/licenses/{commerce_license}/delete",
  *     "collection" = "/admin/commerce/licenses",
