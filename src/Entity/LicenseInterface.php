@@ -52,6 +52,24 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function setExpiresTime($timestamp);
 
   /**
+   * Gets the granted timestamp.
+   *
+   * @return int
+   *   The granted timestamp.
+   */
+  public function getGrantedTime();
+
+  /**
+   * Sets the granted timestamp.
+   *
+   * @param int $timestamp
+   *   The granted timestamp.
+   *
+   * @return $this
+   */
+  public function setGrantedTime($timestamp);
+
+  /**
    * Gets the renewal timestamp.
    *
    * @return int

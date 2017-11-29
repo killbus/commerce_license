@@ -88,10 +88,10 @@ class License extends ContentEntityBase implements LicenseInterface {
       if ($this->state->value == 'active') {
         $activation_time = \Drupal::service('datetime.time')->getRequestTime();
 
-        if (empty($this->get('granted'))) {
+        if (empty($this->getGrantedTime())) {
           // The license has not previously been granted, and is therefore being
           // activated for the first time. Set the 'granted' timestamp.
-          $this->set('granted', $activation_time);
+          $this->setGrantedTime($activation_time);
         }
         else {
           // The license has previously been granted, and is therefore being
@@ -166,6 +166,21 @@ class License extends ContentEntityBase implements LicenseInterface {
    */
   public function setExpiresTime($timestamp) {
     $this->set('expires', $timestamp);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getGrantedTime() {
+    return $this->get('granted')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setGrantedTime($timestamp) {
+    $this->set('granted', $timestamp);
     return $this;
   }
 
