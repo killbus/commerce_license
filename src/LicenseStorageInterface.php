@@ -44,6 +44,6 @@ interface LicenseStorageInterface extends ContentEntityStorageInterface {
    * @return \Drupal\commerce_license\Entity\LicenseInterface
    *   A new, unsaved license entity, whose state is 'new'.
    */
-  public function createFromProductVariation(ProductVariationInterface $variation, int $uid);
+  public function createFromProductVariation(ProductVariationInterface $variation, $uid);
 
 }
