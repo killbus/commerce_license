@@ -20,6 +20,9 @@ license_default:
     failed:
       # State for a license which has failed to activate.
       label: Failed
+    canceled:
+      # State for a subscription license whose subscription is canceled.
+      label: Canceled
   transitions:
     activate:
       label: 'Activate'
@@ -49,3 +52,7 @@ license_default:
       label: Fail
       from: [pending]
       to: failed
+    cancel:
+      label: Cancel
+      from: [active]
+      to: canceled

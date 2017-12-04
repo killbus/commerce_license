@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -25,6 +26,26 @@ function commerce_license_help($route_name, RouteMatchInterface $route_match) {
       return $output;
 
     default:
+  }
+}
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function commerce_license_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  // Add constraints to product variations which use subscription licenses.
+  if ($entity_type->id() == 'commerce_product_variation'
+    && !empty($fields['subscription_type'])
+    && !empty($fields['license_type'])
+  ) {
+    // Add a constraint to the subscription_type field to ensure that our
+    // license subscription type can only be used when the license trait is
+    // also present on the product variation entity.
+    $fields['subscription_type']->addConstraint('LicenseSubscriptionType', []);
+
+    // Add a constraint to the expiration_type field to ensure that when a
+    // subscription is used, the expiration is set to 'unlimited'.
+    $fields['license_expiration']->addConstraint('LicenseExpirationTypeWithSubscription', []);
   }
 }
 
