@@ -17,8 +17,9 @@ license_default:
       label: Expired
     revoked:
       label: Revoked
-    canceled:
-      label: Canceled
+    failed:
+      # State for a license which has failed to activate.
+      label: Failed
   transitions:
     activate:
       label: 'Activate'
@@ -44,7 +45,7 @@ license_default:
       label: 'Revoke'
       from: [active, suspended, expired]
       to: revoked
-    cancel:
-      label: Cancel
+    fail:
+      label: Fail
       from: [pending]
-      to: canceled
+      to: failed
