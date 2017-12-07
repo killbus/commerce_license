@@ -27,7 +27,7 @@ class ProductVariationTypeFormAlter {
   /**
    * Construct a ProductVariationTypeFormAlter object.
    *
-   * @param \Drupal\commerce_product\Entity\ProductVariationType $entity
+   * @param \Drupal\commerce_product\Entity\ProductVariationType $variation_type
    *   The product variation type entity.
    */
   public function __construct(ProductVariationType $variation_type) {
@@ -51,7 +51,8 @@ class ProductVariationTypeFormAlter {
       '#description' => t("Limit the license types that can be used on product variations of this type. All types will be allowed if none are selected."),
       '#options' => $options,
       '#default_value' => $this->variation_type->getThirdPartySetting('commerce_license', 'license_types') ?: [],
-      // Only show this if the license trait is set on the product variation type.
+      // Only show this if the license trait is set on the product variation
+      // type.
       '#states' => [
         'visible' => [
           ':input[name="traits[commerce_license]"]' => ['checked' => TRUE],

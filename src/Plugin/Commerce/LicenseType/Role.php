@@ -37,7 +37,7 @@ class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationChe
    */
   public function defaultConfiguration() {
     return [
-      'license_role' => ''
+      'license_role' => '',
     ] + parent::defaultConfiguration();
   }
 

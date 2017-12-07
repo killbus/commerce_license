@@ -85,7 +85,7 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
    * as that has no configuration.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
-   *    The license entity.
+   *   The license entity.
    */
   public function setConfigurationValuesOnLicense(LicenseInterface $license);
 
