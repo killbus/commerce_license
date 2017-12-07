@@ -17,6 +17,7 @@ use Drupal\commerce_license\ExistingRights\ExistingRightsResult;
  * @CommerceLicenseType(
  *   id = "role",
  *   label = @Translation("Role"),
+ *   activation_order_state = "completed",
  * )
  */
 class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationCheckingInterface, GrantedEntityLockingInterface {
