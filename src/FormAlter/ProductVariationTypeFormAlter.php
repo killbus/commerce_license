@@ -113,6 +113,8 @@ class ProductVariationTypeFormAlter {
     }
 
     // The checkout flow may not allow anonymous checkout.
+    $order_type_id = $order_item_type->getOrderTypeId();
+    $order_type = \Drupal::entityTypeManager()->getStorage('commerce_order_type')->load($order_type_id);
     $checkout_flow_id = $order_type->getThirdPartySetting('commerce_checkout', 'checkout_flow');
     if ($checkout_flow_id) {
       $checkout_flow = \Drupal::entityTypeManager()->getStorage('commerce_checkout_flow')->load($checkout_flow_id);
