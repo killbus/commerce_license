@@ -9,6 +9,11 @@ use Drupal\commerce_order\OrderProcessorInterface;
 
 /**
  * Order processor that ensures only 1 of each license may be added to the cart.
+ *
+ * This is an order processor rather than an availability checker, as
+ * \Drupal\commerce_order\AvailabilityOrderProcessor::check() removes the
+ * entire order item if availability fails, whereas we only want to keep the
+ * quantity at 1.
  */
 class LicenseOrderProcessorMultiples implements OrderProcessorInterface {
 
