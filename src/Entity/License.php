@@ -151,6 +151,20 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * {@inheritdoc}
    */
+  public function getExpirationPluginType() {
+    return $this->get('expiration_type')->target_plugin_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExpirationPlugin() {
+    return $this->get('expiration_type')->first()->getTargetInstance();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setValuesFromPlugin(LicenseTypeInterface $license_plugin) {
     $license_plugin->setConfigurationValuesOnLicense($this);
   }
@@ -228,7 +242,7 @@ class License extends ContentEntityBase implements LicenseInterface {
    */
   protected function calculateExpirationTime($start) {
     /** @var \Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodInterface $expiration_type_plugin */
-    $expiration_type_plugin = $this->get('expiration_type')->first()->getTargetInstance();
+    $expiration_type_plugin = $this->getExpirationPlugin();
 
     // The recurring period plugin needs DateTimeImmutable objects in order
     // to handle timezones properly. So we convert the timestamp to a datetime
