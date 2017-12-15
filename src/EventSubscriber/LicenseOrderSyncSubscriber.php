@@ -66,7 +66,7 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Reacts to an order reaching fulfillment state.
+   * Creates and activates a license when the order reaches the right state.
    *
    * @param \Drupal\state_machine\Event\WorkflowTransitionEvent $event
    *   The event we subscribed to.
