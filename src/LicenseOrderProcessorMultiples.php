@@ -49,7 +49,7 @@ class LicenseOrderProcessorMultiples implements OrderProcessorInterface {
         // cart form for license products, so this is moot.
         drupal_set_message(t("You may only have one of @product-label in your cart.", [
           '@product-label' => $purchased_entity->label(),
-        ]));
+        ]), 'error');
       }
     }
 

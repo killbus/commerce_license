@@ -70,7 +70,7 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
     drupal_set_message(t('You may only have one of @product-label in <a href="@cart-url">your cart</a>.', [
       '@product-label' => $order_item->getPurchasedEntity()->label(),
       '@cart-url' => Url::fromRoute('commerce_cart.page')->toString(),
-    ]));
+    ]), 'error');
   }
 
   /**
@@ -103,7 +103,7 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
     // page.
     drupal_set_message(t('You may only have one of @product-label in your cart.', [
       '@product-label' => $order_item->getPurchasedEntity()->label(),
-    ]));
+    ]), 'error');
   }
 
   /**
