@@ -14,6 +14,11 @@ use Drupal\commerce_order\OrderProcessorInterface;
  * \Drupal\commerce_order\AvailabilityOrderProcessor::check() removes the
  * entire order item if availability fails, whereas we only want to keep the
  * quantity at 1.
+ *
+ * @todo: Figure out if this is still necessary or if the cart event
+ * subscriber covers all cases.
+ *
+ * @see \Drupal\commerce_license\EventSubscriber\LicenseMultiplesCartEventSubscriber
  */
 class LicenseOrderProcessorMultiples implements OrderProcessorInterface {
 

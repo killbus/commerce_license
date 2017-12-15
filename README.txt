@@ -23,6 +23,10 @@ This module requires the following modules:
  * Commerce (https://drupal.org/project/commerce)
  * Recurring Period (https://drupal.org/project/recurring_period)
 
+The following patches are recommended:
+
+ * https://www.drupal.org/project/commerce/issues/2930979: Don't show the
+  'added to your cart' message if the item quantity is unchanged.
 
 KNOWN ISSUES AND LIMITATIONS
 ----------------------------
