@@ -58,7 +58,7 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       // set on the subscription entity in
       // \Drupal\commerce_license\Plugin\Commerce\SubscriptionType::onSubscriptionCreate().
       'commerce_order.place.pre_transition' => ['onCartOrderFulfillment', 100],
-      'commerce_order.validate.post_transition' => ['onCartOrderFulfillment', -100],
+      'commerce_order.validate.pre_transition' => ['onCartOrderFulfillment', -100],
       // Event for reaching the 'canceled' order state.
       'commerce_order.cancel.post_transition' => ['onCartOrderCancel', -100],
     ];
