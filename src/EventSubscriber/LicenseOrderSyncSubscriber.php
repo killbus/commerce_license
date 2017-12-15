@@ -81,6 +81,15 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
     $license_order_items = $this->getOrderItemsWithLicensedProducts($order);
 
     foreach ($license_order_items as $order_item) {
+      // We don't need to do anything if there is already an active license on
+      // the order item.
+      // This happens when we come here for the 'validate' transition having
+      // already come for the 'place' transition , or if another event
+      // subscriber has activated the license.
+      if (!empty($order_item->license->entity) && $order_item->license->entity->getState()->value == 'active') {
+        continue;
+      }
+
       $purchased_entity = $order_item->getPurchasedEntity();
 
       // TODO: throw an exception if the variation doesn't have this set.
