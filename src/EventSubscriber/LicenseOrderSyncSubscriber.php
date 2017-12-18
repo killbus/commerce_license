@@ -57,8 +57,9 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       // This is to ensure that the license is created here before it's
       // set on the subscription entity in
       // \Drupal\commerce_license\Plugin\Commerce\SubscriptionType::onSubscriptionCreate().
-      'commerce_order.place.pre_transition' => ['onCartOrderFulfillment', 100],
-      'commerce_order.validate.pre_transition' => ['onCartOrderFulfillment', -100],
+      'commerce_order.place.pre_transition' => ['onCartOrderTransition', 100],
+      'commerce_order.validate.pre_transition' => ['onCartOrderTransition', -100],
+      'commerce_order.fulfill.pre_transition' => ['onCartOrderTransition', -100],
       // Event for reaching the 'canceled' order state.
       'commerce_order.cancel.post_transition' => ['onCartOrderCancel', -100],
     ];
@@ -66,12 +67,16 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Creates and activates a license when the order reaches the right state.
+   * Creates and activates a license in reaction to an order state change.
+   *
+   * We always create a license when the order goes through the 'place'
+   * transition, regardless of which state that reaches, and at latest activate
+   * it when the order reaches the 'completed' state.
    *
    * @param \Drupal\state_machine\Event\WorkflowTransitionEvent $event
    *   The event we subscribed to.
    */
-  public function onCartOrderFulfillment(WorkflowTransitionEvent $event) {
+  public function onCartOrderTransition(WorkflowTransitionEvent $event) {
     // Get the state we are reaching.
     $reached_state = $event->getToState()->getId();
 
@@ -116,9 +121,18 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       }
 
       // Now determine whether to activate it.
-      // Only act if the license type activates in the state the order is
-      // reaching.
+      $activate_license = FALSE;
+      if ($reached_state == 'completed') {
+        // Always activate the license when we reach the 'completed' state.
+        $activate_license = TRUE;
+      }
       if ($license_type_plugin->getActivationOrderState() != $reached_state) {
+        // Activate the license if we are reaching the state defined by the
+        // license type plugin.
+        $activate_license = TRUE;
+      }
+
+      if (!$activate_license) {
         continue;
       }
 
