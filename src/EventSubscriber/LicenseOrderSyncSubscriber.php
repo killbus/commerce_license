@@ -127,11 +127,6 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
         // Always activate the license when we reach the 'completed' state.
         $activate_license = TRUE;
       }
-      elseif ($license_type_plugin->getActivationOrderState() != $reached_state) {
-        // Activate the license if we are reaching the state defined by the
-        // license type plugin.
-        $activate_license = TRUE;
-      }
       else {
         // Activate the license in the 'place' transition if the product
         // variation type is configured to do so.
