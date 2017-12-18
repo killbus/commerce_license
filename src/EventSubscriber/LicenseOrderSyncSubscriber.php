@@ -95,17 +95,12 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       // TODO: throw an exception if the variation doesn't have this set.
       $license_type_plugin = $purchased_entity->get('license_type')->first()->getTargetInstance();
 
-      // Only act if the license type activates in the state the order is
-      // reaching.
-      if ($license_type_plugin->getActivationOrderState() != $reached_state) {
-        continue;
-      }
-
-      // Only create a new license if the order item doesn't already have one:
-      // this allows for orders to be created programmatically with a configured
-      // license.
+      // Create the license the first time we come here, though allow for
+      // something else to have created it for us already: this allows for
+      // orders to be created programmatically with a configured license.
       if (empty($order_item->license->entity)) {
-        // Create a new license.
+        // Create a new license. It will be in the 'new' state and so not yet
+        // active.
         $license = $this->licenseStorage->createFromOrderItem($order_item);
 
         $license->save();
@@ -118,6 +113,13 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       else {
         // Get the existing license the order item refers to.
         $license = $order_item->license->entity;
+      }
+
+      // Now determine whether to activate it.
+      // Only act if the license type activates in the state the order is
+      // reaching.
+      if ($license_type_plugin->getActivationOrderState() != $reached_state) {
+        continue;
       }
 
       // Attempt to activate and confirm the license.
