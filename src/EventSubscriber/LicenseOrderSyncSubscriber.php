@@ -77,7 +77,8 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
    *   The event we subscribed to.
    */
   public function onCartOrderTransition(WorkflowTransitionEvent $event) {
-    // Get the state we are reaching.
+    // Get the states we are leaving and reaching.
+    $from_state = $event->getFromState()->getId();
     $reached_state = $event->getToState()->getId();
 
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
@@ -126,10 +127,24 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
         // Always activate the license when we reach the 'completed' state.
         $activate_license = TRUE;
       }
-      if ($license_type_plugin->getActivationOrderState() != $reached_state) {
+      elseif ($license_type_plugin->getActivationOrderState() != $reached_state) {
         // Activate the license if we are reaching the state defined by the
         // license type plugin.
         $activate_license = TRUE;
+      }
+      else {
+        // Activate the license in the 'place' transition if the product
+        // variation type is configured to do so.
+        // This then relies on onCartOrderCancel() to cancel the license if
+        // the order itself is canceled later.
+        $product_variation_type = $this->entityTypeManager->getStorage('commerce_product_variation_type')->load($purchased_entity->bundle());
+        $activate_on_place = $product_variation_type->getThirdPartySetting('commerce_license', 'activate_on_place');
+
+        // We have to check the from state, because the event can't tell us
+        // the transition: see https://www.drupal.org/project/state_machine/issues/2931447
+        if ($activate_on_place && $from_state == 'draft') {
+          $activate_license = TRUE;
+        }
       }
 
       if (!$activate_license) {
