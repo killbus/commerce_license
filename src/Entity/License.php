@@ -385,8 +385,7 @@ class License extends ContentEntityBase implements LicenseInterface {
           'custom_date_format' => 'n/Y',
         ],
       ])
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDefaultValue(0);
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['renewed'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Renewed'))
@@ -400,8 +399,7 @@ class License extends ContentEntityBase implements LicenseInterface {
           'custom_date_format' => 'n/Y',
         ],
       ])
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDefaultValue(0);
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
@@ -420,6 +418,7 @@ class License extends ContentEntityBase implements LicenseInterface {
         ],
       ])
       ->setDisplayConfigurable('view', TRUE)
+      // Default to unlimited.
       ->setDefaultValue(0);
 
     return $fields;
