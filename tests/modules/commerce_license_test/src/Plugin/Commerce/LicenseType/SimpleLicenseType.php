@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\commerce_license_simple_type\Plugin\Commerce\LicenseType;
+namespace Drupal\commerce_license_test\Plugin\Commerce\LicenseType;
 
 use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeBase;
 use Drupal\commerce_license\Entity\LicenseInterface;

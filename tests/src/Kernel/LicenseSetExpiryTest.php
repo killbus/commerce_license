@@ -25,7 +25,7 @@ class LicenseSetExpiryTest extends EntityKernelTestBase {
     'commerce_product',
     'recurring_period',
     'commerce_license',
-    'commerce_license_simple_type',
+    'commerce_license_test',
     'commerce_license_set_expiry_test',
   ];
 
