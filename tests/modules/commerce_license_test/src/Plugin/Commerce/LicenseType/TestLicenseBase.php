@@ -8,8 +8,6 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeBase;
 
 /**
  * Base class for test license types: implements the needed methods.
- *
- * TODO: move other testing license types into this module.
  */
 class TestLicenseBase extends LicenseTypeBase {
 
