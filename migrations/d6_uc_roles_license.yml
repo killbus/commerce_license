@@ -50,4 +50,4 @@ dependencies:
   enforced:
     module:
       - commerce_product
-s      - commerce_license
+      - commerce_license
