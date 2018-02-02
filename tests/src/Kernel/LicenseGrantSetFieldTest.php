@@ -81,6 +81,7 @@ class LicenseGrantSetFieldTest extends EntityKernelTestBase {
     ]);
 
     $license->save();
+    $license = $this->reloadEntity($license);
 
     $this->assertEqual('', $license->test_field->value, 'The plugin-controlled field is not set.');
 
@@ -88,6 +89,7 @@ class LicenseGrantSetFieldTest extends EntityKernelTestBase {
     // plugin to react.
     $license->state = 'active';
     $license->save();
+    $license = $this->reloadEntity($license);
 
     $this->assertEqual('granted', $license->test_field->value, 'The plugin-controlled field has been set by grantLicense().');
 
@@ -95,6 +97,7 @@ class LicenseGrantSetFieldTest extends EntityKernelTestBase {
     // plugin to react.
     $license->state = 'expired';
     $license->save();
+    $license = $this->reloadEntity($license);
 
     $this->assertEqual('revoked', $license->test_field->value, 'The plugin-controlled field has been set by revokeLicense().');
   }

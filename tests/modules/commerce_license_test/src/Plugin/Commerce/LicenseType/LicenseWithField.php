@@ -20,7 +20,7 @@ class LicenseWithField extends TestLicenseBase {
    */
   public function grantLicense(LicenseInterface $license) {
     // Set the value on our field.
-    $license->test_field = 'granted';
+    $license->set('test_field', 'granted');
   }
 
   /**
@@ -28,7 +28,7 @@ class LicenseWithField extends TestLicenseBase {
    */
   public function revokeLicense(LicenseInterface $license) {
     // Set the value on our field.
-    $license->test_field = 'revoked';
+    $license->set('test_field', 'revoked');
   }
 
   /**
