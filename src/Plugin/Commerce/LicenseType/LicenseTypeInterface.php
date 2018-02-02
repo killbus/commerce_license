@@ -80,7 +80,8 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
   /**
    * Reacts to the license being activated.
    *
-   * The license's privileges should be granted to its user.
+   * The license's privileges should be granted to its user. This is called
+   * during preSave(), so values may be set on the license entity.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
    *   The license entity.
@@ -90,7 +91,8 @@ interface LicenseTypeInterface extends BundlePluginInterface, ConfigurablePlugin
   /**
    * Reacts to the license being revoked.
    *
-   * The license's privileges should be removed from its user.
+   * The license's privileges should be removed from its user. This is called
+   * during preSave(), so values may be set on the license entity.
    *
    * @param \Drupal\commerce_license\Entity\LicenseInterface $license
    *   The license entity.
