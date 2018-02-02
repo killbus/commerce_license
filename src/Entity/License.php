@@ -80,13 +80,24 @@ class License extends ContentEntityBase implements LicenseInterface {
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
 
-    // If the state is being changed to 'active', set the granted and expiration
-    // timestamps.
-    // We don't notify the license type plugin here in case the save is
-    // cancelled by something else.
+    // Act when the license state changes, or the license is new.
     // (Note that $this->original is not set on new entities.)
     if ((isset($this->original) && $this->state->value != $this->original->state->value) || !isset($this->original)) {
+      // If the state is being changed to 'active', set the granted and
+      // expiration timestamps, and notify the license type plugin. We act on
+      // preSave() rather than postSave() so that the license plugin can set
+      // values on the license. HOWEVER, this means that if something acts in
+      // hook_entity_presave() to prevent saving, by throwing an exception, the
+      // license entity will be unsaved, but the license plugin will have
+      // granted the license, leaving it in an incorrect state.
+      // TODO: override doPreSave() in LicenseStorage to catch exceptions and
+      // revert the grant if the save is cancelled.
       if ($this->state->value == 'active') {
+        // The state is moved to 'active', or the license was created active:
+        // the license activates.
+        $this->getTypePlugin()->grantLicense($this);
+
+        // Set timestamps.
         $activation_time = \Drupal::service('datetime.time')->getRequestTime();
 
         if (empty($this->getGrantedTime())) {
@@ -102,26 +113,10 @@ class License extends ContentEntityBase implements LicenseInterface {
 
         $this->setExpiresTime($this->calculateExpirationTime($activation_time));
       }
-    }
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    parent::postSave($storage, $update);
-
-    // If the state was changed, notify our license type plugin.
-    // (Note that $this->original is not set on new entities.)
-    if ((isset($this->original) && $this->state->value != $this->original->state->value) || !isset($this->original)) {
-      if ($this->state->value == 'active') {
-        // The state is moved to 'active', or the license was created active:
-        // the license activates.
-        $this->getTypePlugin()->grantLicense($this);
-      }
-
+      // The state is being moved away from 'active'.
       if (isset($this->original) && $this->original->state->value == 'active') {
-        // The state is moved away from 'active': the license is revoked.
+        // The license is revoked.
         $this->getTypePlugin()->revokeLicense($this);
       }
     }
