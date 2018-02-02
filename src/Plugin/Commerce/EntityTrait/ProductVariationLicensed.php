@@ -4,7 +4,7 @@ namespace Drupal\commerce_license\Plugin\Commerce\EntityTrait;
 
 use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitInterface;
 use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitBase;
-use Drupal\commerce\BundleFieldDefinition;
+use Drupal\entity\BundleFieldDefinition;
 
 /**
  * Provides an entity trait for Commerce Product Variation entities.

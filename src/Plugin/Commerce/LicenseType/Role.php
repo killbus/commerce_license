@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
-use Drupal\commerce\BundleFieldDefinition;
+use Drupal\entity\BundleFieldDefinition;
 use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_license\Entity\LicenseInterface;
 use Drupal\commerce_license\ExistingRights\ExistingRightsResult;
