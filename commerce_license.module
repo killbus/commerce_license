@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -47,6 +48,33 @@ function commerce_license_entity_bundle_field_info_alter(&$fields, EntityTypeInt
     // subscription is used, the expiration is set to 'unlimited'.
     $fields['license_expiration']->addConstraint('LicenseExpirationTypeWithSubscription', []);
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete(): commerce_order_item
+ */
+function commerce_license_commerce_order_item_delete(EntityInterface $entity) {
+  // Delete licenses for order items which are removed from a cart.
+
+  // Only act on order items with the license field.
+  if (!$entity->hasField('license')) {
+    return;
+  }
+
+  // Only act if there is a license.
+  if (empty($entity->license->entity)) {
+    return;
+  }
+
+  // Only act if the order is in draft. If the order is being edited when
+  // complete, the license is probably active.
+  if ($entity->getOrder()->getState()->value != 'draft') {
+    return;
+  }
+
+  // Delete the license.
+  $license = $entity->license->entity;
+  $license->delete();
 }
 
 /**
