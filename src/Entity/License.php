@@ -45,7 +45,7 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *     },
  *   },
  *   base_table = "commerce_license",
- *   admin_permission = "administer licenses",
+ *   admin_permission = "administer commerce_license",
  *   fieldable = TRUE,
  *   entity_keys = {
  *     "id" = "license_id",
