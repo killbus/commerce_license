@@ -13,6 +13,7 @@ dependencies:
   - recurring_period
 test_dependencies:
   - advancedqueue
+  - recurring_period
   - commerce_recurring
 config_devel:
   install:
