@@ -3,3 +3,5 @@ type: module
 description: 'Test module for Commerce License'
 package: Testing
 core: 8.x
+dependencies:
+  - recurring_period

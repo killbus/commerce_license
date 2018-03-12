@@ -19,6 +19,7 @@ class RoleGrantedLockingTest extends BrowserTestBase {
   public static $modules = [
     'system',
     'user',
+    'advancedqueue',
     'recurring_period',
     'commerce_license',
   ];

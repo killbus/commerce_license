@@ -10,5 +10,7 @@
     "issues": "https://www.drupal.org/project/issues/commerce_license",
     "source": "http://cgit.drupalcode.org/commerce_license"
   },
-  "require": { }
+  "require": {
+    "drupal/advancedqueue": "^1.0"
+  }
 }

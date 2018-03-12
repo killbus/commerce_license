@@ -33,3 +33,7 @@ services:
       - '@entity_type.manager'
     tags:
       - { name: commerce.availability_checker }
+
+  commerce_license.cron:
+    class: \Drupal\commerce_license\Cron
+    arguments: ['@entity_type.manager', '@datetime.time']

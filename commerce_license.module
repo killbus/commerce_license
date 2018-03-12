@@ -196,3 +196,10 @@ function commerce_licence_get_user_timezone(AccountInterface $user) {
     return !empty($config_data_default_timezone) ? $config_data_default_timezone : @date_default_timezone_get();
   }
 }
+
+/**
+ * Implements hook_cron().
+ */
+function commerce_license_cron() {
+  \Drupal::service('commerce_license.cron')->run();
+}
