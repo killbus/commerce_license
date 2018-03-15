@@ -162,7 +162,7 @@ class CommerceRecurringSubscriptionLifecycleTest extends CommerceKernelTestBase 
         'currency_code' => 'USD',
       ],
       'license_type' => [
-        'target_plugin_id' => 'state_change_test',
+        'target_plugin_id' => 'state_change_with_rights',
         'target_plugin_configuration' => [],
       ],
       // Use the unlimited expiry plugin as it's simple.
@@ -248,10 +248,12 @@ class CommerceRecurringSubscriptionLifecycleTest extends CommerceKernelTestBase 
     $recurring_order = $order_storage->load(reset($result));
     $this->assertNotEmpty($recurring_order);
     // Confirm that the recurring order has an order item for the subscription.
+    // This tests that when the recurring order was saved, our own availability
+    // checking did not fire and cause the order item to be removed.
     $recurring_order_items = $recurring_order->getItems();
-    $this->assertCount(1, $recurring_order_items);
+    $this->assertCount(1, $recurring_order_items, "The recurring order has an order item.");
     $recurring_order_item = reset($recurring_order_items);
-    $this->assertEquals($subscription->id(), $recurring_order_item->get('subscription')->target_id);
+    $this->assertEquals($subscription->id(), $recurring_order_item->get('subscription')->target_id, "The recurring order's order item has a reference to the subscription.");
 
     // Check that the order item now refers to a new license which has been
     // created for the user.

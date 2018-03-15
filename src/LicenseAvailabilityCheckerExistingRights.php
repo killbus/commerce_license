@@ -7,6 +7,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\commerce\AvailabilityCheckerInterface;
 use Drupal\commerce\Context;
 use Drupal\commerce\PurchasableEntityInterface;
+use Drupal\commerce_recurring\RecurringOrderManager;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\commerce_license\Plugin\Commerce\LicenseType\ExistingRightsFromConfigurationCheckingInterface;
 
@@ -82,6 +83,20 @@ class LicenseAvailabilityCheckerExistingRights implements AvailabilityCheckerInt
    * {@inheritdoc}
    */
   public function check(PurchasableEntityInterface $entity, $quantity, Context $context) {
+    // Don't do an availability check on recurring orders.
+    // Very ugly workaround for the lack of any information about the order at
+    // this point.
+    // See https://www.drupal.org/project/commerce/issues/2937041
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+    foreach ($backtrace as $backtrace_call) {
+      // If the availability check is being done for an order being saved or
+      // created by Commerce Recurring's RecurringOrderManager, then it's a
+      // recurring order, and we shouldn't do anything.
+      if (isset($backtrace_call['class']) && $backtrace_call['class'] == RecurringOrderManager::class) {
+        return;
+      }
+    }
+
     // Hand over to the license type plugin configured in the product variation,
     // to let it determine whether the user already has what the license would
     // grant.
