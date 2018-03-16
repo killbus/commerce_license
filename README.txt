@@ -22,6 +22,11 @@ This module requires the following modules:
 
  * Commerce (https://drupal.org/project/commerce)
  * Recurring Period (https://drupal.org/project/recurring_period)
+ * Advanced Queue (https://drupal.org/project/advancedqueue)
+
+This module also integrates with Commerce Recurring
+(https://drupal.org/project/commerce_recurring) to provide licenses that
+automatically renew with a subscription.
 
 The following patches are recommended:
 
@@ -31,15 +36,40 @@ The following patches are recommended:
 INSTALLATION
 ------------
 
- 1 Install as you would normally install a contributed Drupal module. Visit
-   https://www.drupal.org/docs/8/extending-drupal-8/installing-drupal-8-modules
-   for further information.
- 2 Configure or create a checkout flow which does not allow anonymous checkout.
- 3 Configure or create an Order Type to use the checkout flow.
- 4 Configure or create an Order Item Type to use the Order Type, and work with
+Install as you would normally install a contributed Drupal module. Visit
+https://www.drupal.org/docs/8/extending-drupal-8/installing-drupal-8-modules for
+further information.
+
+CONFIGURATION
+-------------
+
+To create products that grant licenses that expire:
+
+ 1 Configure or create a checkout flow which does not allow anonymous checkout.
+ 2 Configure or create an Order Type to use the checkout flow.
+ 3 Configure or create an Order Item Type to use the Order Type, and work with
    Licenses.
- 5 Configure or create a Product Variation Type to use the Order Item Type, and
+ 4 Configure or create a Product Variation Type to use the Order Item Type, and
    provide Licenses.
+ 5 Create one or more products that provide licenses. In the product variation,
+   configure:
+   - The license type
+   - The expiration.
+
+To create products that grant licenses that renew with a subscription:
+
+1 Configure or create a checkout flow which does not allow anonymous checkout.
+2 Configure or create an Order Type to use the checkout flow.
+3 Configure or create an Order Item Type to use the Order Type, and work with
+  Licenses.
+4 Configure or create a Product Variation Type to use the Order Item Type, and
+  provide both Licenses and Subscriptions.
+5 Create one or more products that provide licenses and subscriptions. In the
+  product variation, configure:
+  - The license type
+  - The expiration should be 'Unlimited', as the subscription controls this.
+  - Set the subscription type to 'License'
+  - Select the billing schedule.
 
 KNOWN ISSUES AND LIMITATIONS
 ----------------------------
