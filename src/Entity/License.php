@@ -41,7 +41,7 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *     },
  *     "views_data" = "Drupal\commerce_license\LicenseViewsData",
  *     "route_provider" = {
- *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "html" = "Drupal\commerce_license\LicenseRouteProvider",
  *     },
  *   },
  *   base_table = "commerce_license",
