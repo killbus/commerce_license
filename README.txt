@@ -45,16 +45,17 @@ CONFIGURATION
 
 To create products that grant licenses that expire:
 
- 1 Configure or create a checkout flow which does not allow anonymous checkout.
- 2 Configure or create an Order Type to use the checkout flow.
- 3 Configure or create an Order Item Type to use the Order Type, and work with
-   Licenses.
- 4 Configure or create a Product Variation Type to use the Order Item Type, and
-   provide Licenses.
- 5 Create one or more products that provide licenses. In the product variation,
-   configure:
-   - The license type
-   - The expiration.
+1 Configure or create a checkout flow which does not allow anonymous checkout.
+2 Configure or create an Order Type to use the checkout flow.
+3 Configure or create an Order Item Type to use the Order Type, and work with
+  Licenses.
+4 Configure or create a Product Variation Type to use the Order Item Type, and
+  provide Licenses.
+5 Configure or create a Product Type that uses the Product Variation Type.
+6 Create one or more products that provide licenses. In the product variation,
+  configure:
+  - The license type
+  - The expiration.
 
 To create products that grant licenses that renew with a subscription:
 
@@ -64,11 +65,12 @@ To create products that grant licenses that renew with a subscription:
   Licenses.
 4 Configure or create a Product Variation Type to use the Order Item Type, and
   provide both Licenses and Subscriptions.
-5 Create one or more products that provide licenses and subscriptions. In the
+5 Configure or create a Product Type that uses the Product Variation Type.
+6 Create one or more products that provide licenses and subscriptions. In the
   product variation, configure:
   - The license type
   - The expiration should be 'Unlimited', as the subscription controls this.
-  - Set the subscription type to 'License'
+  - Set the subscription type to 'License'.
   - Select the billing schedule.
 
 KNOWN ISSUES AND LIMITATIONS
