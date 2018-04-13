@@ -55,8 +55,8 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *   },
  *   links = {
  *     "canonical" = "/admin/commerce/licenses/{commerce_license}",
- *     "add-page" = "/admin/commerce/licenses/add",
- *     "add-form" = "/admin/commerce/licenses/add/{type}",
+ *     "XXadd-page" = "/admin/commerce/licenses/add",
+ *     "XXadd-form" = "/admin/commerce/licenses/add/{type}",
  *     "edit-form" = "/admin/commerce/licenses/{commerce_license}/edit",
  *     "delete-form" = "/admin/commerce/licenses/{commerce_license}/delete",
  *     "collection" = "/admin/commerce/licenses",
