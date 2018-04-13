@@ -53,6 +53,7 @@ class UcRolesLicense extends DrupalSqlBase {
     // have a role granted.
     $query->innerJoin('uc_orders', 'uo', 'uop.order_id = uo.order_id AND ure.uid = uo.uid');
 
+    $query->fields('uop', ['order_product_id']);
     $query->fields('uo', [
       'created',
       'modified',
@@ -131,6 +132,11 @@ class UcRolesLicense extends DrupalSqlBase {
       'reid' => [
         'type' => 'integer',
         'alias' => 'ure',
+      ],
+      // Add the order product ID as a key, so that order product migrations
+      // can look up the license to reference it.
+      'order_product_id' => [
+        'type' => 'integer',
       ],
     ];
   }
