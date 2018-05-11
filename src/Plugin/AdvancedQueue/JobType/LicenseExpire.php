@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @AdvancedQueueJobType(
  *   id = "commerce_license_expire",
- *   label = @Translation("Expire licenses."),
+ *   label = @Translation("Expire licenses"),
  * )
  */
 class LicenseExpire extends JobTypeBase implements ContainerFactoryPluginInterface {
