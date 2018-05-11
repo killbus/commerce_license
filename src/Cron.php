@@ -52,10 +52,10 @@ class Cron implements CronInterface {
       $queue = $queue_storage->load('commerce_license');
       foreach ($license_ids as $license_id) {
         // Create a job and queue each one up.
-        $expire_remove_roles_job = Job::create('commerce_license_expire', [
+        $expire_license_job = Job::create('commerce_license_expire', [
           'license_id' => $license_id,
         ]);
-        $queue->enqueueJob($expire_remove_roles_job);
+        $queue->enqueueJob($expire_license_job);
       }
     }
   }
