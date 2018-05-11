@@ -147,11 +147,6 @@ function commerce_license_theme() {
     'file' => 'commerce_license.page.inc',
     'template' => 'commerce_license',
   );
-  $theme['commerce_license_content_add_list'] = [
-    'render element' => 'content',
-    'variables' => ['content' => NULL],
-    'file' => 'commerce_license.page.inc',
-  ];
   return $theme;
 }
 
