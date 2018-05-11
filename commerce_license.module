@@ -141,13 +141,13 @@ function commerce_license_field_widget_form_alter(&$element, FormStateInterface 
  * Implements hook_theme().
  */
 function commerce_license_theme() {
-  $theme = [];
-  $theme['commerce_license'] = array(
-    'render element' => 'elements',
-    'file' => 'commerce_license.page.inc',
-    'template' => 'commerce_license',
-  );
-  return $theme;
+  return [
+    'commerce_license' => [
+      'render element' => 'elements',
+      'file' => 'commerce_license.page.inc',
+      'template' => 'commerce_license',
+    ],
+  ];
 }
 
 /**
