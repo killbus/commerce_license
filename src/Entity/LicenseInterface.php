@@ -119,6 +119,14 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function getState();
 
   /**
+   * Gets the licensed entity that was purchased.
+   *
+   * @return \Drupal\commerce\PurchasableEntityInterface
+   *   The licensed entity.
+   */
+  public function getPurchasedEntity();
+
+  /**
    * Set values on the license from a configured license type plugin.
    *
    * This should be called when a license is created for an order, using the
