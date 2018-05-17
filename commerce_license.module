@@ -147,6 +147,17 @@ function commerce_license_theme() {
       'file' => 'commerce_license.page.inc',
       'template' => 'commerce_license',
     ],
+    'commerce_license_expire' => [
+      'variables' => [
+        'license_entity' => NULL,
+        'purchased_entity' => NULL,
+        // Needs to be its own parameter, as toUrl() is not whitelisted for
+        // Twig.
+        // TODO: remove this when https://www.drupal.org/project/drupal/issues/2907810
+        // is fixed.
+        'purchased_entity_url' => '',
+      ],
+    ],
   ];
 }
 
@@ -163,6 +174,21 @@ function commerce_license_theme_suggestions_commerce_license(array $variables) {
   $suggestions[] = 'commerce_license__' . $entity->bundle() . '__' . $sanitized_view_mode;
   $suggestions[] = 'commerce_license__' . $entity->id();
   $suggestions[] = 'commerce_license__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function commerce_license_theme_suggestions_commerce_license_expire(array $variables) {
+  $suggestions = [];
+
+  $license_entity = $variables['license_entity'];
+
+  // TODO: This works in themes, but not for a template within this module,
+  // apparently because of a core bug.
+  $suggestions[] = 'commerce_license_expire__' . $license_entity->bundle();
+
   return $suggestions;
 }
 
@@ -197,4 +223,17 @@ function commerce_licence_get_user_timezone(AccountInterface $user) {
  */
 function commerce_license_cron() {
   \Drupal::service('commerce_license.cron')->run();
+}
+
+/**
+ * Implements hook_mail().
+ */
+function commerce_license_mail($key, &$message, $params) {
+  if (isset($params['headers'])) {
+    $message['headers'] = array_merge($message['headers'], $params['headers']);
+  }
+
+  $message['from'] = $params['from'];
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
 }

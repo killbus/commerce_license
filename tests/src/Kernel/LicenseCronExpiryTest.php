@@ -5,6 +5,7 @@ namespace Drupal\Tests\commerce_license\Kernel\System;
 use Drupal\advancedqueue\Entity\Queue;
 use Drupal\advancedqueue\Job;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
+use Drupal\Core\Test\AssertMailTrait;
 use ReflectionClass;
 
 /**
@@ -13,6 +14,8 @@ use ReflectionClass;
  * @group commerce_license
  */
 class LicenseCronExpiryTest extends EntityKernelTestBase {
+
+  use AssertMailTrait;
 
   /**
    * The number of seconds in one day.
@@ -67,6 +70,8 @@ class LicenseCronExpiryTest extends EntityKernelTestBase {
     $this->installConfig('user');
     $this->installSchema('advancedqueue', 'advancedqueue');
     $this->installEntitySchema('commerce_license');
+    // This is just duplicates of the queues in the real module, as we don't
+    // want to have to install the admin view in this test.
     $this->installConfig('commerce_license_set_expiry_test');
 
     $this->cron = \Drupal::service('cron');
@@ -310,12 +315,37 @@ class LicenseCronExpiryTest extends EntityKernelTestBase {
     $processor = $this->container->get('advancedqueue.processor');
     $num_processed = $processor->processQueue($queue);
     $this->assertEquals(1, $num_processed);
+    $counts = array_filter($queue->getBackend()->countJobs());
+    $this->assertEquals([Job::STATE_SUCCESS => 1], $counts);
 
     $license = $this->reloadEntity($license);
     $this->assertEquals('expired', $license->state->value, "The license is now expired.");
 
     // Note that we don't need to check that the expiry did something, as that
     // is covered by LicenseStateChangeTest.
+
+    // Check the notification email is now queued.
+    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+    $notification_queue = Queue::load('commerce_license_notify');
+    $counts = array_filter($notification_queue->getBackend()->countJobs());
+    $this->assertEquals([Job::STATE_QUEUED => 1], $counts);
+
+    // Run the notification queue.
+    $num_processed = $processor->processQueue($notification_queue);
+    $this->assertEquals(1, $num_processed);
+    $counts = array_filter($notification_queue->getBackend()->countJobs());
+    $this->assertEquals([Job::STATE_SUCCESS => 1], $counts);
+
+    $mails = $this->getMails();
+    $this->assertEquals(1, count($mails));
+
+    $expiry_email = reset($mails);
+    $this->assertEquals('text/html; charset=UTF-8;', $expiry_email['headers']['Content-Type']);
+    $this->assertEquals('8Bit', $expiry_email['headers']['Content-Transfer-Encoding']);
+    $this->assertMailString('subject', 'Your purchase of test license has now expired', 1);
+    $this->assertMailString('body', 'License Expiry', 1);
+    $this->assertMailString('body', 'Your purchase of test license has now expired', 1);
+    // TODO: add a product to test the product text.
   }
 
 }

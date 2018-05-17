@@ -81,6 +81,22 @@ class LicenseExpire extends JobTypeBase implements ContainerFactoryPluginInterfa
     catch (Exception $exception) {
       return $result = JobResult::failure($exception->getMessage());
     }
+
+    // If the license was successfully expired, create and queue a job to send
+    // a notification.
+    // Use a different queue so a) they can be processed differently, and b)
+    // so if the expiry queue is very full, it doesn't delay notifications.
+    // We send the email from here rather than in the License entity, as if
+    // something else chooses to expire a license (e.g. Commerce Recurring), it
+    // may want to be in control of the messages it sends.
+    $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+    $queue = $queue_storage->load('commerce_license_notify');
+    $expire_notification_job = Job::create('commerce_license_expire_notify', [
+      'license_id' => $license_id,
+    ]);
+    $queue->enqueueJob($expire_notification_job);
+
     return JobResult::success();
   }
 
