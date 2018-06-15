@@ -158,8 +158,8 @@ class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationChe
     $fields = parent::buildFieldDefinitions();
 
     $fields['license_role'] = BundleFieldDefinition::create('entity_reference')
-      ->setLabel(t('Roles'))
-      ->setDescription(t('The roles this product grants access to.'))
+      ->setLabel(t('Role'))
+      ->setDescription(t('The role this product grants access to.'))
       ->setCardinality(1)
       ->setRequired(TRUE)
       ->setSetting('target_type', 'user_role')
