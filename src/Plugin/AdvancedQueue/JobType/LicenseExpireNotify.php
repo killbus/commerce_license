@@ -144,9 +144,14 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
 
     $langcode = $owner->getPreferredLangcode();
 
-    $this->pluginManagerMail->mail('commerce_license', 'license_expire', $to, $langcode, $params);
+    $message = $this->pluginManagerMail->mail('commerce_license', 'license_expire', $to, $langcode, $params);
 
-    return JobResult::success();
+    if ($message['result']) {
+      return JobResult::success();
+    }
+    else {
+      return JobResult::failure('Unable to send expiry notification mail.');
+    }
   }
 
 }
