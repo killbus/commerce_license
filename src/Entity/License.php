@@ -314,18 +314,27 @@ class License extends ContentEntityBase implements LicenseInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
+    $fields['type']->setDisplayOptions('view', [
+      'label' => 'inline',
+      'type' => 'string',
+      'weight' => 0,
+    ]);
+
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Owner'))
       ->setDescription(t('The user ID of the license owner.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\commerce_license\Entity\License::getCurrentUserId')
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'author',
-        'weight' => 0,
-      ))
       ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'entity_reference_label',
+        'weight' => 2,
+        'settings' => [
+          'link' => TRUE,
+        ],
+      ])
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['state'] = BaseFieldDefinition::create('state')
@@ -339,6 +348,11 @@ class License extends ContentEntityBase implements LicenseInterface {
         'weight' => 10,
       ])
       ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'state_transition_form',
+        'weight' => 50,
+      ])
       ->setDisplayConfigurable('view', TRUE)
       ->setSetting('workflow_callback', ['\Drupal\commerce_license\Entity\License', 'getWorkflowId']);
 
@@ -357,6 +371,14 @@ class License extends ContentEntityBase implements LicenseInterface {
         ],
       ])
       ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'entity_reference_label',
+        'weight' => 1,
+        'settings' => [
+          'link' => TRUE,
+        ],
+      ])
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['expiration_type'] = BaseFieldDefinition::create('commerce_plugin_item:recurring_period')
@@ -368,22 +390,37 @@ class License extends ContentEntityBase implements LicenseInterface {
         'type' => 'commerce_plugin_select',
         'weight' => 21,
       ])
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'commerce_plugin_item_default',
+        'weight' => 25,
+      ])
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
-      ->setDescription(t('The time that the license was created.'));
+      ->setDescription(t('The time that the license was created.'))
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'timestamp',
+        // Start date-type weights at 20, to leave plenty of space for
+        // license type plugin fields to go before them
+        'weight' => 20,
+        'settings' => [
+          'date_format' => 'medium',
+        ],
+      ])
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['granted'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Granted'))
       ->setDescription(t('The time that the license was first granted or activated.'))
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => 'inline',
         'type' => 'timestamp',
-        'weight' => 1,
+        'weight' => 21,
         'settings' => [
-          'date_format' => 'custom',
-          'custom_date_format' => 'n/Y',
+          'date_format' => 'medium',
         ],
       ])
       ->setDisplayConfigurable('view', TRUE);
@@ -392,12 +429,11 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setLabel(t('Renewed'))
       ->setDescription(t('The time that the license was most recently renewed.'))
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => 'inline',
         'type' => 'timestamp',
-        'weight' => 1,
+        'weight' => 22,
         'settings' => [
-          'date_format' => 'custom',
-          'custom_date_format' => 'n/Y',
+          'date_format' => 'medium',
         ],
       ])
       ->setDisplayConfigurable('view', TRUE);
@@ -410,12 +446,11 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setLabel(t('Expires'))
       ->setDescription(t('The time that the license will expire, if any.'))
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => 'inline',
         'type' => 'timestamp',
-        'weight' => 1,
+        'weight' => 26,
         'settings' => [
-          'date_format' => 'custom',
-          'custom_date_format' => 'n/Y',
+          'date_format' => 'medium',
         ],
       ])
       ->setDisplayConfigurable('view', TRUE)
