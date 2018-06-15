@@ -162,7 +162,15 @@ class Role extends LicenseTypeBase implements ExistingRightsFromConfigurationChe
       ->setDescription(t('The roles this product grants access to.'))
       ->setCardinality(1)
       ->setRequired(TRUE)
-      ->setSetting('target_type', 'user_role');
+      ->setSetting('target_type', 'user_role')
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'entity_reference_label',
+        'weight' => 1,
+        'settings' => [
+          'link' => TRUE,
+        ],
+      ]);
 
     return $fields;
   }
