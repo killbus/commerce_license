@@ -110,7 +110,11 @@ class License extends ContentEntityBase implements LicenseInterface {
           $this->setRenewedTime($activation_time);
         }
 
-        $this->setExpiresTime($this->calculateExpirationTime($activation_time));
+        // Set the expiry time on a new license, but allow licenses to be
+        // created with a set expiry, such as in the case of a migration.
+        if (!$this->getExpiresTime()) {
+          $this->setExpiresTime($this->calculateExpirationTime($activation_time));
+        }
       }
 
       // The state is being moved away from 'active'.
