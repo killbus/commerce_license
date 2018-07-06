@@ -28,6 +28,12 @@ This module also integrates with Commerce Recurring
 (https://drupal.org/project/commerce_recurring) to provide licenses that
 automatically renew with a subscription.
 
+The following patches are required:
+
+ * https://www.drupal.org/project/drupal/issues/2911473#comment-12676912
+  Selected yet disabled individual options from checkboxes element don't persist
+  through save.
+
 The following patches are recommended:
 
  * https://www.drupal.org/project/commerce/issues/2930979: Don't show the
