@@ -134,7 +134,7 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
     if ($purchased_entity = $license->getPurchasedEntity()) {
       $build += [
         '#purchased_entity' => $purchased_entity,
-        '#purchased_entity_url' => $purchased_entity->toUrl(),
+        '#purchased_entity_url' => $purchased_entity->toUrl()->setAbsolute(),
       ];
     }
 
