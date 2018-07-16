@@ -39,7 +39,7 @@
 
             {% if (purchased_entity) %}
               {{ 'You may renew it by repurchasing <a href="@product-url">@product-label</a>.'|t({
-                '@product-url': purchased_entity_url,
+                '@product-url': purchased_entity_url.toString,
                 '@product-label': purchased_entity.label,
               }) }}
             {% endif %}
