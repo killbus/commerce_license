@@ -41,15 +41,17 @@ class LicenseOrderProcessorMultiples implements OrderProcessorInterface {
         $order_item->setQuantity(1);
 
         $purchased_entity = $order_item->getPurchasedEntity();
-        // Note that this message shows both when attempting to increase the
-        // quantity of a license product already in the cart, and when
-        // attempting to put more than 1 of a license product into the cart.
-        // In the latter case, the message isn't as clear as it could be, but
-        // site builders should be hiding the quantity field from the add to
-        // cart form for license products, so this is moot.
-        drupal_set_message(t("You may only have one of @product-label in your cart.", [
-          '@product-label' => $purchased_entity->label(),
-        ]), 'error');
+        if ($purchased_entity) {
+          // Note that this message shows both when attempting to increase the
+          // quantity of a license product already in the cart, and when
+          // attempting to put more than 1 of a license product into the cart.
+          // In the latter case, the message isn't as clear as it could be, but
+          // site builders should be hiding the quantity field from the add to
+          // cart form for license products, so this is moot.
+          drupal_set_message(t("You may only have one of @product-label in your cart.", [
+            '@product-label' => $purchased_entity->label(),
+          ]), 'error');
+        }
       }
     }
 
