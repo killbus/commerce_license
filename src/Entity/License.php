@@ -2,11 +2,13 @@
 
 namespace Drupal\commerce_license\Entity;
 
+use Drupal\commerce_product\Entity\ProductVariationType;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
 
@@ -29,7 +31,8 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  *   bundle_plugin_type = "commerce_license_type",
  *   handlers = {
  *     "access" = "\Drupal\entity\UncacheableEntityAccessControlHandler",
- *     "permission_provider" = "\Drupal\commerce_license\LicensePermissionProvider",
+ *     "permission_provider" =
+ *   "\Drupal\commerce_license\LicensePermissionProvider",
  *     "list_builder" = "Drupal\commerce_license\LicenseListBuilder",
  *     "storage" = "Drupal\commerce_license\LicenseStorage",
  *     "form" = {
@@ -63,7 +66,18 @@ use Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface;
  * )
  */
 class License extends ContentEntityBase implements LicenseInterface {
+
   use EntityChangedTrait;
+  use StringTranslationTrait;
+
+  /**
+   * The renewal window start time.
+   *
+   * Calculated in the case of a renewable license.
+   *
+   * @var int|null
+   */
+  protected $renewalWindowStartTime = NULL;
 
   /**
    * {@inheritdoc}
@@ -110,10 +124,23 @@ class License extends ContentEntityBase implements LicenseInterface {
           $this->setRenewedTime($activation_time);
         }
 
+        // Renewal completed.
+        if (isset($this->original) && $this->original->state->value == 'renewal_in_progress') {
+          $expires_time = $this->getExpiresTime();
+          if ($expires_time < $activation_time) {
+            $expires_time = $activation_time;
+          }
+          $this->setExpiresTime(
+            $this->calculateExpirationTime($expires_time)
+          );
+        }
+
         // Set the expiry time on a new license, but allow licenses to be
         // created with a set expiry, such as in the case of a migration.
         if (!$this->getExpiresTime()) {
-          $this->setExpiresTime($this->calculateExpirationTime($activation_time));
+          $this->setExpiresTime(
+            $this->calculateExpirationTime($activation_time)
+          );
         }
       }
 
@@ -142,7 +169,9 @@ class License extends ContentEntityBase implements LicenseInterface {
    */
   public function getTypePlugin() {
     /** @var \Drupal\commerce_license\LicenseTypeManager $license_type_manager */
-    $license_type_manager = \Drupal::service('plugin.manager.commerce_license_type');
+    $license_type_manager = \Drupal::service(
+      'plugin.manager.commerce_license_type'
+    );
     return $license_type_manager->createInstance($this->bundle());
   }
 
@@ -228,6 +257,13 @@ class License extends ContentEntityBase implements LicenseInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getRenewalWindowStartTime() {
+    return $this->renewalWindowStartTime;
+  }
+
+  /**
    * Calculate the expiration time for this license from a start time.
    *
    * @param int $start
@@ -237,6 +273,8 @@ class License extends ContentEntityBase implements LicenseInterface {
    *   The expiry timestamp, or the value
    *   \Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodInterface::UNLIMITED
    *   if the license does not expire.
+   *
+   * @throws \Exception
    */
   protected function calculateExpirationTime($start) {
     /** @var \Drupal\recurring_period\Plugin\RecurringPeriod\RecurringPeriodInterface $expiration_type_plugin */
@@ -247,7 +285,9 @@ class License extends ContentEntityBase implements LicenseInterface {
     // using an appropriate timezone for the user, and then convert the
     // expiration back into a UTC timestamp.
     $start_date = (new \DateTimeImmutable('@' . $start))
-      ->setTimezone(new \DateTimeZone(commerce_licence_get_user_timezone($this->getOwner())));
+      ->setTimezone(
+        new \DateTimeZone(commerce_licence_get_user_timezone($this->getOwner()))
+      );
     $expiration_date = $expiration_type_plugin->calculateDate($start_date);
 
     // The returned date is either \DateTimeImmutable or
@@ -281,7 +321,6 @@ class License extends ContentEntityBase implements LicenseInterface {
     $this->set('uid', $uid);
     return $this;
   }
-
 
   /**
    * {@inheritdoc}
@@ -318,27 +357,35 @@ class License extends ContentEntityBase implements LicenseInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['type']->setDisplayOptions('view', [
-      'label' => 'inline',
-      'type' => 'string',
-      'weight' => 0,
-    ]);
+    $fields['type']->setDisplayOptions(
+      'view',
+      [
+        'label' => 'inline',
+        'type' => 'string',
+        'weight' => 0,
+      ]
+    );
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Owner'))
       ->setDescription(t('The user ID of the license owner.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\commerce_license\Entity\License::getCurrentUserId')
+      ->setDefaultValueCallback(
+        'Drupal\commerce_license\Entity\License::getCurrentUserId'
+      )
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'entity_reference_label',
-        'weight' => 2,
-        'settings' => [
-          'link' => TRUE,
-        ],
-      ])
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'entity_reference_label',
+          'weight' => 2,
+          'settings' => [
+            'link' => TRUE,
+          ],
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['state'] = BaseFieldDefinition::create('state')
@@ -346,100 +393,140 @@ class License extends ContentEntityBase implements LicenseInterface {
       ->setDescription(t('The license state.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255)
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'state_transition_form',
-        'weight' => 10,
-      ])
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'hidden',
+          'type' => 'state_transition_form',
+          'weight' => 10,
+        ]
+      )
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'state_transition_form',
-        'weight' => 50,
-      ])
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'hidden',
+          'type' => 'state_transition_form',
+          'weight' => 50,
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE)
-      ->setSetting('workflow_callback', ['\Drupal\commerce_license\Entity\License', 'getWorkflowId']);
+      ->setSetting(
+        'workflow_callback',
+        ['\Drupal\commerce_license\Entity\License', 'getWorkflowId']
+      );
 
-    $fields['product_variation'] = BaseFieldDefinition::create('entity_reference')
+    $fields['product_variation'] = BaseFieldDefinition::create(
+      'entity_reference'
+    )
       ->setLabel(t('Licensed product variation'))
       ->setDescription(t('The licensed product variation.'))
       ->setRequired(TRUE)
       ->setSetting('target_type', 'commerce_product_variation')
-      ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
-        'weight' => -1,
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'placeholder' => '',
-        ],
-      ])
+      ->setDisplayOptions(
+        'form',
+        [
+          'type' => 'entity_reference_autocomplete',
+          'weight' => -1,
+          'settings' => [
+            'match_operator' => 'CONTAINS',
+            'size' => '60',
+            'placeholder' => '',
+          ],
+        ]
+      )
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'entity_reference_label',
-        'weight' => 1,
-        'settings' => [
-          'link' => TRUE,
-        ],
-      ])
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'entity_reference_label',
+          'weight' => 1,
+          'settings' => [
+            'link' => TRUE,
+          ],
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['expiration_type'] = BaseFieldDefinition::create('commerce_plugin_item:recurring_period')
+    $fields['expiration_type'] = BaseFieldDefinition::create(
+      'commerce_plugin_item:recurring_period'
+    )
       ->setLabel(t('Expiration type'))
-      ->setDescription(t("The configuration for calculating the license's expiry."))
+      ->setDescription(
+        t("The configuration for calculating the license's expiry.")
+      )
       ->setCardinality(1)
       ->setRequired(FALSE)
-      ->setDisplayOptions('form', [
-        'type' => 'commerce_plugin_select',
-        'weight' => 21,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'commerce_plugin_item_default',
-        'weight' => 25,
-      ])
+      ->setDisplayOptions(
+        'form',
+        [
+          'type' => 'commerce_plugin_select',
+          'weight' => 21,
+        ]
+      )
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'commerce_plugin_item_default',
+          'weight' => 25,
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the license was created.'))
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'timestamp',
-        // Start date-type weights at 20, to leave plenty of space for
-        // license type plugin fields to go before them
-        'weight' => 20,
-        'settings' => [
-          'date_format' => 'medium',
-        ],
-      ])
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'timestamp',
+          // Start date-type weights at 20, to leave plenty of space for
+          // license type plugin fields to go before them.
+          'weight' => 20,
+          'settings' => [
+            'date_format' => 'medium',
+          ],
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['granted'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Granted'))
-      ->setDescription(t('The time that the license was first granted or activated.'))
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'timestamp',
-        'weight' => 21,
-        'settings' => [
-          'date_format' => 'medium',
-        ],
-      ])
+      ->setDescription(
+        t('The time that the license was first granted or activated.')
+      )
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'timestamp',
+          'weight' => 21,
+          'settings' => [
+            'date_format' => 'medium',
+          ],
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['renewed'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Renewed'))
-      ->setDescription(t('The time that the license was most recently renewed.'))
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'timestamp',
-        'weight' => 22,
-        'settings' => [
-          'date_format' => 'medium',
-        ],
-      ])
+      ->setDescription(
+        t('The time that the license was most recently renewed.')
+      )
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'timestamp',
+          'weight' => 22,
+          'settings' => [
+            'date_format' => 'medium',
+          ],
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
@@ -449,14 +536,17 @@ class License extends ContentEntityBase implements LicenseInterface {
     $fields['expires'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Expires'))
       ->setDescription(t('The time that the license will expire, if any.'))
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'timestamp',
-        'weight' => 26,
-        'settings' => [
-          'date_format' => 'medium',
-        ],
-      ])
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'inline',
+          'type' => 'timestamp',
+          'weight' => 26,
+          'settings' => [
+            'date_format' => 'medium',
+          ],
+        ]
+      )
       ->setDisplayConfigurable('view', TRUE)
       // Default to unlimited.
       ->setDefaultValue(0);
@@ -467,13 +557,71 @@ class License extends ContentEntityBase implements LicenseInterface {
   /**
    * Default value callback for 'uid' base field definition.
    *
-   * @see ::baseFieldDefinitions()
-   *
    * @return array
    *   An array of default values.
+   * @see ::baseFieldDefinitions()
    */
   public static function getCurrentUserId() {
     return [\Drupal::currentUser()->id()];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function canRenew() {
+    if (!in_array($this->state->value, ['active', 'renewal_in_progress'])) {
+      return FALSE;
+    }
+
+    $variation = $this->getPurchasedEntity();
+    $product_variation_type_id = $variation->bundle();
+    $product_variation_type = ProductVariationType::load(
+      $product_variation_type_id
+    );
+
+    $allow_renewal = $product_variation_type->getThirdPartySetting(
+      'commerce_license',
+      'allow_renewal',
+      FALSE
+    );
+    if (!$allow_renewal) {
+      return FALSE;
+    }
+
+    $allow_renewal_window_interval = $product_variation_type->getThirdPartySetting(
+      'commerce_license',
+      'interval'
+    );
+    $allow_renewal_window_period = $product_variation_type->getThirdPartySetting(
+      'commerce_license',
+      'period'
+    );
+
+    // Code from Drupal\recurring_period\Plugin\RecurringPeriod\RollingInterval
+    // method calculateDate.
+    // Create a DateInterval that represents the interval.
+    // TODO: This can be removed when https://www.drupal.org/node/2900435 lands.
+    $interval_plugin_definition = \Drupal::service(
+      'plugin.manager.interval.intervals'
+    )->getDefinition($allow_renewal_window_period);
+    $value = $allow_renewal_window_interval * $interval_plugin_definition['multiplier'];
+    $date_interval = \DateInterval::createFromDateString(
+      $value . ' ' . $interval_plugin_definition['php']
+    );
+    $renewal_window_start_time = (new \DateTime(
+      date('r', $this->getExpiresTime())
+    ))
+      ->setTimezone(
+        new \DateTimeZone(commerce_licence_get_user_timezone($this->getOwner()))
+      );
+    $renewal_window_start_time->sub($date_interval);
+    $this->renewalWindowStartTime = $renewal_window_start_time->getTimestamp();
+    if ($this->renewalWindowStartTime < \Drupal::time()->getRequestTime()) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
   }
 
 }

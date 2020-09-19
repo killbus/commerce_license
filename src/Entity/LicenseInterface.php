@@ -88,9 +88,20 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
   public function setRenewedTime($timestamp);
 
   /**
+   * The renewal window start time.
+   *
+   * Calculated in the case of a renewable license.
+   *
+   * @return int|null
+   *   The renewal window start time.
+   */
+  public function getRenewalWindowStartTime();
+
+  /**
    * Get an unconfigured instance of the associated license type plugin.
    *
    * @return \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface
+   *   The plugin type
    */
   public function getTypePlugin();
 
@@ -133,7 +144,7 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
    * configured license type plugin on the product variation that is being
    * purchased.
    *
-   * @param \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface
+   * @param \Drupal\commerce_license\Plugin\Commerce\LicenseType\LicenseTypeInterface $license_plugin
    *   The configured license type plugin.
    */
   public function setValuesFromPlugin(LicenseTypeInterface $license_plugin);
@@ -150,5 +161,13 @@ interface LicenseInterface extends EntityChangedInterface, EntityOwnerInterface 
    * @see \Drupal\state_machine\Plugin\Field\FieldType\StateItem
    */
   public static function getWorkflowId(LicenseInterface $license);
+
+  /**
+   * Checks if the license can be renewed at this time.
+   *
+   * @return bool
+   *   TRUE if the license can be renewed. FALSE otherwise.
+   */
+  public function canRenew();
 
 }

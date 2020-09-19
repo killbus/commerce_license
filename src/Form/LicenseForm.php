@@ -22,18 +22,25 @@ class LicenseForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label License.', [
-          '%label' => $entity->label(),
-        ]));
-
+        \Drupal::messenger()->addStatus(
+          t('Created the %label License.', [
+            '%label' => $entity->label(),
+          ])
+        );
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label License.', [
-          '%label' => $entity->label(),
-        ]));
+        \Drupal::messenger()->addStatus(
+          t('Saved the %label License.', [
+            '%label' => $entity->label(),
+          ])
+        );
     }
-    $form_state->setRedirect('entity.commerce_license.canonical', ['commerce_license' => $entity->id()]);
+
+    $form_state->setRedirect(
+      'entity.commerce_license.canonical',
+      ['commerce_license' => $entity->id()]
+    );
   }
 
 }

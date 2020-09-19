@@ -21,6 +21,15 @@ services:
     tags:
       - { name: commerce_order.order_processor }
 
+  commerce_license.license_renewal_cart_event_subscriber:
+    class: Drupal\commerce_license\EventSubscriber\LicenseRenewalCartEventSubscriber
+    arguments:
+      - '@entity_type.manager'
+      - '@messenger'
+      - '@date.formatter'
+    tags:
+      - { name: event_subscriber }
+
   commerce_license.license_multiples_cart_event_subscriber:
     class: Drupal\commerce_license\EventSubscriber\LicenseMultiplesCartEventSubscriber
     tags:

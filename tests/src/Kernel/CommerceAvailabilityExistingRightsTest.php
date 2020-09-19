@@ -4,7 +4,7 @@ namespace Drupal\Tests\commerce_license\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
-use Drupal\Tests\commerce_cart\Kernel\CartManagerTestTrait;
+use Drupal\Tests\commerce_cart\Traits\CartManagerTestTrait;
 
 /**
  * Tests a product is not added to the cart when the user has existing rights.
@@ -48,9 +48,11 @@ class CommerceAvailabilityExistingRightsTest extends CommerceKernelTestBase {
     'state_machine',
     'commerce_product',
     'commerce_order',
+    'interval',
     'recurring_period',
     'commerce_license',
     'commerce_license_test',
+    'commerce_number_pattern',
   ];
 
   /**
@@ -66,6 +68,7 @@ class CommerceAvailabilityExistingRightsTest extends CommerceKernelTestBase {
     $this->installEntitySchema('commerce_order_item');
     $this->installConfig('commerce_order');
     $this->installConfig('commerce_product');
+    $this->installEntitySchema('commerce_license');
     $this->createUser();
 
     // Create an order type for licenses which uses the fulfillment workflow.

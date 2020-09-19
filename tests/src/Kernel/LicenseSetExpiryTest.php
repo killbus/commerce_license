@@ -27,6 +27,7 @@ class LicenseSetExpiryTest extends EntityKernelTestBase {
     'commerce_license',
     'commerce_license_test',
     'commerce_license_set_expiry_test',
+    'interval',
   ];
 
   /**

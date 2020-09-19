@@ -3,10 +3,7 @@
 namespace Drupal\commerce_license;
 
 use Drupal\Core\Entity\ContentEntityStorageInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
-use Drupal\commerce_license\Entity\LicenseInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 
 /**
@@ -45,5 +42,18 @@ interface LicenseStorageInterface extends ContentEntityStorageInterface {
    *   A new, unsaved license entity, whose state is 'new'.
    */
   public function createFromProductVariation(ProductVariationInterface $variation, $uid);
+
+  /**
+   * Get existing active license given a product variation and a user ID.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The product variation.
+   * @param int $uid
+   *   The uid for whom the license will be retrieved.
+   *
+   * @return \Drupal\commerce_license\Entity\LicenseInterface|false
+   *   An existing license entity. FALSE otherwise.
+   */
+  public function getExistingLicense(ProductVariationInterface $variation, $uid);
 
 }

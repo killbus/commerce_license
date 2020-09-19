@@ -51,10 +51,11 @@ function commerce_license_entity_bundle_field_info_alter(&$fields, EntityTypeInt
 }
 
 /**
- * Implements hook_ENTITY_TYPE_delete(): commerce_order_item
+ * Implements hook_ENTITY_TYPE_delete() for commerce_order_item.
+ *
+ * Delete licenses for order items which are removed from a cart.
  */
 function commerce_license_commerce_order_item_delete(EntityInterface $entity) {
-  // Delete licenses for order items which are removed from a cart.
 
   // Only act on order items with the license field.
   if (!$entity->hasField('license')) {
@@ -72,9 +73,26 @@ function commerce_license_commerce_order_item_delete(EntityInterface $entity) {
     return;
   }
 
-  // Delete the license.
+  /** @var \Drupal\commerce_license\Entity\LicenseInterface $license */
   $license = $entity->license->entity;
-  $license->delete();
+
+  // In case of renewal, set the license back to active.
+  if ($license->getState()->value == 'renewal_in_progress') {
+    // We need the intermediate state of renewal_cancelled because otherwise in
+    // the License entity preSave method we would continue to extend the
+    // expiration of the license.
+    $transition = $license->getState()->getWorkflow()->getTransition('cancel_renewal');
+    $license->getState()->applyTransition($transition);
+    $license->save();
+
+    $transition = $license->getState()->getWorkflow()->getTransition('confirm');
+    $license->getState()->applyTransition($transition);
+    $license->save();
+  }
+  else {
+    // Delete the license.
+    $license->delete();
+  }
 }
 
 /**
@@ -90,7 +108,7 @@ function commerce_license_form_alter(&$form, FormStateInterface $form_state, $fo
 }
 
 /**
- * Implements hook_form_BASE_FORM_ID_alter(): commerce_product_variation_type_form
+ * Implements hook_form_BASE_FORM_ID_alter() for commerce_product_variation_type_form.
  */
 function commerce_license_form_commerce_product_variation_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form_alter = new ProductVariationTypeFormAlter($form_state->getFormObject()->getEntity());
@@ -151,9 +169,8 @@ function commerce_license_theme() {
       'variables' => [
         'license_entity' => NULL,
         'purchased_entity' => NULL,
-        // Needs to be its own parameter, as toUrl() is not whitelisted for
-        // Twig.
-        // TODO: remove this when https://www.drupal.org/project/drupal/issues/2907810
+        // Needs to be its own parameter: toUrl() is not whitelisted for Twig.
+        // TODO: remove this when https://www.drupal.org/project/drupal/issues/
         // is fixed.
         'purchased_entity_url' => '',
       ],
@@ -162,10 +179,10 @@ function commerce_license_theme() {
 }
 
 /**
-* Implements hook_theme_suggestions_HOOK().
-*/
+ * Implements hook_theme_suggestions_HOOK().
+ */
 function commerce_license_theme_suggestions_commerce_license(array $variables) {
-  $suggestions = array();
+  $suggestions = [];
   $entity = $variables['elements']['#commerce_license'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 
@@ -200,10 +217,10 @@ function commerce_license_theme_suggestions_commerce_license_expire(array $varia
  * current user.
  *
  * @param \Drupal\Core\Session\AccountInterface $user
- *    A user account.
+ *   A user account.
  *
  * @return string
- *    The timezone name.
+ *   The timezone name.
  */
 function commerce_licence_get_user_timezone(AccountInterface $user) {
   $config = \Drupal::config('system.date');

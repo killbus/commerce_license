@@ -27,6 +27,7 @@ class LicenseGrantSetFieldTest extends EntityKernelTestBase {
     'recurring_period',
     'commerce_license',
     'commerce_license_test',
+    'interval',
   ];
 
   /**

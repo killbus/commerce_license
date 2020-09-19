@@ -2,8 +2,6 @@
 
 namespace Drupal\commerce_license;
 
-use Drupal\commerce\AvailabilityManagerInterface;
-use Drupal\commerce\Context;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\OrderProcessorInterface;
 
@@ -26,21 +24,36 @@ class LicenseOrderProcessorMultiples implements OrderProcessorInterface {
    * {@inheritdoc}
    */
   public function process(OrderInterface $order) {
+
+    $license_items = 0;
     foreach ($order->getItems() as $order_item) {
       // Skip order items that do not have a license reference field.
       if (!$order_item->hasField('license')) {
         continue;
       }
 
+      $license_items++;
+
       // TODO: Allow license type plugins to respond here, as for types that
       // collect user data in the checkout form, the same product variation can
       // result in different licenses.
       $quantity = $order_item->getQuantity();
-      if ($quantity > 1) {
+
+      if ($quantity > 1 || $license_items > 1) {
+        $purchased_entity = $order_item->getPurchasedEntity();
+        if ($license_items > 1) {
+          $message = t("You already have one item similar to @product-label in your cart.", [
+            '@product-label' => $purchased_entity->label(),
+          ]);
+          $order->removeItem($order_item);
+        } else {
+          $message = t("You may only have one of @product-label in your cart.", [
+            '@product-label' => $purchased_entity->label(),
+          ]);
+        }
         // Force the quantity back to 1.
         $order_item->setQuantity(1);
 
-        $purchased_entity = $order_item->getPurchasedEntity();
         if ($purchased_entity) {
           // Note that this message shows both when attempting to increase the
           // quantity of a license product already in the cart, and when
@@ -48,14 +61,12 @@ class LicenseOrderProcessorMultiples implements OrderProcessorInterface {
           // In the latter case, the message isn't as clear as it could be, but
           // site builders should be hiding the quantity field from the add to
           // cart form for license products, so this is moot.
-          drupal_set_message(t("You may only have one of @product-label in your cart.", [
-            '@product-label' => $purchased_entity->label(),
-          ]), 'error');
+          \Drupal::messenger()->addError(
+            $message
+          );
         }
       }
     }
-
-    return;
   }
 
 }

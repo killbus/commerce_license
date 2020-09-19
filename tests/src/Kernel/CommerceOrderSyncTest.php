@@ -4,7 +4,7 @@ namespace Drupal\Tests\commerce_license\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
-use Drupal\Tests\commerce_cart\Kernel\CartManagerTestTrait;
+use Drupal\Tests\commerce_cart\Traits\CartManagerTestTrait;
 
 /**
  * Tests changes to an order are synchronized to the license.
@@ -66,9 +66,11 @@ class CommerceOrderSyncTest extends CommerceKernelTestBase {
     'state_machine',
     'commerce_product',
     'commerce_order',
+    'interval',
     'recurring_period',
     'commerce_license',
     'commerce_license_test',
+    'commerce_number_pattern',
   ];
 
   /**

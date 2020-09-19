@@ -3,10 +3,7 @@
 namespace Drupal\commerce_license;
 
 use Drupal\commerce\CommerceContentEntityStorage;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
-use Drupal\commerce_license\Entity\LicenseInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 
 /**
@@ -56,6 +53,25 @@ class LicenseStorage extends CommerceContentEntityStorage implements LicenseStor
     $license->setValuesFromPlugin($license_type_plugin);
 
     return $license;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExistingLicense(ProductVariationInterface $variation, $uid) {
+    $existing_licenses_ids = $this->getQuery()
+      ->condition('state', ['active', 'renewal_in_progress'], 'IN')
+      ->condition('uid', $uid)
+      ->condition('product_variation', $variation->id())
+      ->execute();
+
+    if (!empty($existing_licenses_ids)) {
+      $existing_license_id = array_shift($existing_licenses_ids);
+      return $this->load($existing_license_id);
+    }
+    else {
+      return FALSE;
+    }
   }
 
 }

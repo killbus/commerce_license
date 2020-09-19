@@ -7,6 +7,7 @@ use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Render\RenderContext;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\advancedqueue\Job;
 use Drupal\advancedqueue\JobResult;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
@@ -44,6 +45,13 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
   protected $pluginManagerMail;
 
   /**
+   * The current time.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * Creates a CommerceLicenseExpireNotify instance.
    *
    * @param array $configuration
@@ -58,6 +66,8 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
    *   The Renderer service.
    * @param \Drupal\Core\Mail\MailManagerInterface $plugin_manager_mail
    *   The Mail Manager service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The current time.
    */
   public function __construct(
     array $configuration,
@@ -65,12 +75,14 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
     $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
     RendererInterface $renderer,
-    MailManagerInterface $plugin_manager_mail
+    MailManagerInterface $plugin_manager_mail,
+    TimeInterface $time
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->renderer = $renderer;
     $this->pluginManagerMail = $plugin_manager_mail;
+    $this->time = $time;
   }
 
   /**
@@ -83,7 +95,8 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('renderer'),
-      $container->get('plugin.manager.mail')
+      $container->get('plugin.manager.mail'),
+      $container->get('datetime.time')
     );
   }
 
@@ -97,6 +110,10 @@ class LicenseExpireNotify extends JobTypeBase implements ContainerFactoryPluginI
     $license = $license_storage->load($license_id);
     if (!$license) {
       return JobResult::failure('License not found.');
+    }
+
+    if ($license->getExpiresTime() > $this->time->getRequestTime()) {
+      return JobResult::failure('License is not expired.');
     }
 
     $owner = $license->getOwner();
