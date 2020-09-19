@@ -6,7 +6,6 @@ use Drupal\Core\Url;
 use Drupal\commerce_cart\Event\CartEntityAddEvent;
 use Drupal\commerce_cart\Event\CartEvents;
 use Drupal\commerce_cart\Event\CartOrderItemUpdateEvent;
-use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -46,6 +45,8 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\commerce_cart\Event\CartEntityAddEvent $event
    *   The cart event.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function onCartEntityAdd(CartEntityAddEvent $event) {
     $order_item = $event->getOrderItem();
@@ -67,10 +68,12 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
     // Force the quantity back to 1.
     $this->forceOrderItemQuantity($order_item);
 
-    drupal_set_message(t('You may only have one of @product-label in <a href="@cart-url">your cart</a>.', [
-      '@product-label' => $order_item->getPurchasedEntity()->label(),
-      '@cart-url' => Url::fromRoute('commerce_cart.page')->toString(),
-    ]), 'error');
+    \Drupal::messenger()->addError(
+      t('You may only have one of @product-label in <a href="@cart-url">your cart</a>.', [
+        '@product-label' => $order_item->getPurchasedEntity()->label(),
+        '@cart-url' => Url::fromRoute('commerce_cart.page')->toString(),
+      ])
+    );
   }
 
   /**
@@ -78,6 +81,8 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\commerce_cart\Event\CartOrderItemUpdateEvent $event
    *   The cart event.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function onCartItemUpdate(CartOrderItemUpdateEvent $event) {
     $order_item = $event->getOrderItem();
@@ -101,9 +106,11 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
 
     // Don't show a link to the cart as the user will typically be on the cart
     // page.
-    drupal_set_message(t('You may only have one of @product-label in your cart.', [
-      '@product-label' => $order_item->getPurchasedEntity()->label(),
-    ]), 'error');
+    \Drupal::messenger()->addError(
+      t('You may only have one of @product-label in your cart.', [
+        '@product-label' => $order_item->getPurchasedEntity()->label(),
+      ])
+    );
   }
 
   /**
@@ -111,6 +118,8 @@ class LicenseMultiplesCartEventSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\commerce_order\Entity\OrderItemInterface $order_item
    *   The order item.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function forceOrderItemQuantity(OrderItemInterface $order_item) {
     // Force the quantity back to 1.

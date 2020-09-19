@@ -20,12 +20,12 @@ class LicenseCheckoutForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
 
     if (!$this->entity->isNew()) {
-      $form['new_revision'] = array(
+      $form['new_revision'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Create new revision'),
         '#default_value' => FALSE,
         '#weight' => 10,
-      );
+      ];
     }
 
     $this->entity->getPlugin()->buildCheckoutForm($form, $form_state);
@@ -57,17 +57,23 @@ class LicenseCheckoutForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label License.', [
-          '%label' => $entity->label(),
-        ]));
+        \Drupal::messenger()->addStatus(
+          t('Created the %label License.', [
+            '%label' => $entity->label(),
+          ])
+        );
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label License.', [
-          '%label' => $entity->label(),
-        ]));
+        \Drupal::messenger()->addStatus(
+          t('Saved the %label License.', [
+            '%label' => $entity->label(),
+          ])
+        );
     }
+
     $form_state->setRedirect('entity.commerce_license.canonical', ['commerce_license' => $entity->id()]);
+
   }
 
 }

@@ -8,7 +8,6 @@ use Drupal\commerce\AvailabilityCheckerInterface;
 use Drupal\commerce\Context;
 use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_recurring\RecurringOrderManager;
-use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\commerce_license\Plugin\Commerce\LicenseType\ExistingRightsFromConfigurationCheckingInterface;
 
 /**
@@ -61,6 +60,8 @@ class LicenseAvailabilityCheckerExistingRights implements AvailabilityCheckerInt
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function applies(PurchasableEntityInterface $entity) {
     // This applies only to product variations which have our license trait on
@@ -71,16 +72,19 @@ class LicenseAvailabilityCheckerExistingRights implements AvailabilityCheckerInt
     }
 
     // This applies only to license types that implement the interface.
-    $license_type_plugin = $entity->license_type->first()->getTargetInstance();
+    $license_type_plugin = $entity->get('license_type')->first()->getTargetInstance();
     if ($license_type_plugin instanceof ExistingRightsFromConfigurationCheckingInterface) {
       return TRUE;
     }
-
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function check(PurchasableEntityInterface $entity, $quantity, Context $context) {
     // Don't do an availability check on recurring orders.
@@ -97,15 +101,73 @@ class LicenseAvailabilityCheckerExistingRights implements AvailabilityCheckerInt
       }
     }
 
-    // Hand over to the license type plugin configured in the product variation,
-    // to let it determine whether the user already has what the license would
-    // grant.
     $customer = $context->getCustomer();
-
-    $license_type_plugin = $entity->license_type->first()->getTargetInstance();
-
     // Load the full user entity for the plugin.
     $user = $this->entityTypeManager->getStorage('user')->load($customer->id());
+
+    // Handle licence renewal.
+    /** @var \Drupal\commerce_license\Entity\LicenseInterface $existing_license */
+    $existing_license = $this->entityTypeManager
+      ->getStorage('commerce_license')
+      ->getExistingLicense($entity, $user->id());
+
+    if ($existing_license && $existing_license->canRenew()) {
+      return;
+    }
+
+    // Shows a message to indicate window start time,
+    // in case license is renewable but we're out of its renewable window.
+    $unsetNotPurchasableMessage = FALSE;
+    if ($existing_license && !is_null($existing_license->getRenewalWindowStartTime())) {
+      $this->setRenewalStartTimeMessage(
+        $existing_license->getRenewalWindowStartTime(),
+        $entity->label()
+      );
+
+      // Removes the notPurchasable message.
+      $unsetNotPurchasableMessage = TRUE;
+      // TODO remove Drupal\commerce_order\Plugin\Validation\Constraint message:
+      // @product-label is not available with a quantity of @quantity.
+    }
+
+    return $this->checkPurchasable($entity, $user, $unsetNotPurchasableMessage);
+  }
+
+  /**
+   * Adds a renewalStartTimeMessage status message to queue.
+   *
+   * @param  int | null $renewal_window_start_time
+   *   The renewal window start time
+   * @param string $label
+   *   The purchased product label
+   */
+  private function setRenewalStartTimeMessage($renewal_window_start_time, $label) {
+    \Drupal::messenger()->addStatus(
+      t('You have an existing license for this @product-label. You will be able to renew your license after @date.', [
+        '@date' => \Drupal::service('date.formatter')->format($renewal_window_start_time),
+        '@product-label' => $label,
+      ])
+    );
+  }
+
+  /**
+   * Hand over to the license type plugin configured in the product variation,
+   * to let it determine whether the user already has what the license would
+   * grant. Adds a notPurchasableMessage status message to queue.
+   *
+   * @param PurchasableEntityInterface $entity
+   *   The purchased entity
+   * @param \Drupal\Core\Entity\EntityInterface $user
+   *   The user the license would be granted to
+   * @param bool $unsetNotPurchasableMessage
+   *   Whether to display a notPurchasableMessage message or not
+   *
+   * @return mixed
+   *
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
+   */
+  private function checkPurchasable($entity, $user, $unsetNotPurchasableMessage) {
+    $license_type_plugin = $entity->get('license_type')->first()->getTargetInstance();
     $existing_rights_result = $license_type_plugin->checkUserHasExistingRights($user);
 
     if ($existing_rights_result->hasExistingRights()) {
@@ -116,14 +178,16 @@ class LicenseAvailabilityCheckerExistingRights implements AvailabilityCheckerInt
       else {
         $rights_check_message = $existing_rights_result->getOtherUserMessage();
       }
-      $message = $rights_check_message . ' ' . t("You may not purchase the @product-label product.", [
-        '@product-label' => $entity->label(),
-      ]);
-      drupal_set_message($message);
 
+      if ($unsetNotPurchasableMessage === FALSE) {
+        \Drupal::messenger()->addWarning(
+          $rights_check_message . ' ' . t("You may not purchase the @product-label product.", [
+            '@product-label' => $entity->label(),
+          ])
+        );
+      }
       return FALSE;
     }
-
     // No opinion: return NULL.
   }
 

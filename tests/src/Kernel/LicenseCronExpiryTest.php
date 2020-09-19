@@ -37,6 +37,7 @@ class LicenseCronExpiryTest extends EntityKernelTestBase {
     'commerce_product',
     'commerce_license',
     'commerce_license_test',
+    'interval',
     'recurring_period',
     'commerce_license_set_expiry_test',
   ];

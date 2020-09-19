@@ -41,6 +41,7 @@ class CommerceRecurringSubscriptionLifecycleTest extends CommerceKernelTestBase 
   public static $modules = [
     'advancedqueue',
     'entity_reference_revisions',
+    'interval',
     'path',
     'profile',
     'state_machine',
@@ -51,6 +52,7 @@ class CommerceRecurringSubscriptionLifecycleTest extends CommerceKernelTestBase 
     'recurring_period',
     'commerce_license',
     'commerce_license_test',
+    'commerce_number_pattern',
     'commerce_recurring',
   ];
 
@@ -240,6 +242,7 @@ class CommerceRecurringSubscriptionLifecycleTest extends CommerceKernelTestBase 
     // Confirm that a recurring order is present.
     $order_storage = \Drupal::entityTypeManager()->getStorage('commerce_order');
     $result = $order_storage->getQuery()
+      ->accessCheck(FALSE)
       ->condition('type', 'recurring')
       ->pager(1)
       ->execute();

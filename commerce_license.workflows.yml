@@ -11,6 +11,10 @@ license_default:
       label: Pending
     active:
       label: Active
+    renewal_in_progress:
+      label: Renewal in progress
+    renewal_cancelled:
+      label: Renewal cancelled
     suspended:
       label: Suspended
     expired:
@@ -31,8 +35,16 @@ license_default:
       to: pending
     confirm:
       label: 'Confirm Activation'
-      from: [new, pending]
+      from: [new, pending, renewal_in_progress, renewal_cancelled]
       to: active
+    renewal_in_progress:
+      label: 'Renewal in progress'
+      from: [active]
+      to: renewal_in_progress
+    cancel_renewal:
+      label: 'Cancel renewal'
+      from: [renewal_in_progress]
+      to: renewal_cancelled
     suspend:
       label: 'Suspend'
       from: [active]

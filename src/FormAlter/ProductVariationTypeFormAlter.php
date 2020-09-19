@@ -22,16 +22,16 @@ class ProductVariationTypeFormAlter {
    *
    * @var \Drupal\commerce_product\Entity\ProductVariationType
    */
-  protected $variation_type;
+  protected $variationType;
 
   /**
    * Construct a ProductVariationTypeFormAlter object.
    *
-   * @param \Drupal\commerce_product\Entity\ProductVariationType $variation_type
+   * @param \Drupal\commerce_product\Entity\ProductVariationType $variationType
    *   The product variation type entity.
    */
-  public function __construct(ProductVariationType $variation_type) {
-    $this->variation_type = $variation_type;
+  public function __construct(ProductVariationType $variationType) {
+    $this->variation_type = $variationType;
 
     // TODO: inject services.
   }
@@ -68,19 +68,51 @@ class ProductVariationTypeFormAlter {
       '#options' => $options,
       '#default_value' => $this->variation_type->getThirdPartySetting('commerce_license', 'license_types') ?: [],
     ];
+
     // TODO: consider whether to lock this once the product variation type is
     // created or has product variation entities, or at least lock the enabled
     // license types.
-
     $our_form['license']['activate_on_place'] = [
       '#type' => 'checkbox',
       '#title' => t("Activate license when order is placed"),
       '#description' => t(
-        "Activates the license as soon as the customer completes checkout, rather than waiting for payment to be taken. " .
-        "If payment subsequently fails, canceling the order will cancel the license. " .
-        "This only has an effect with order types that use validation or fulfilment states and payment gateways that are asynchronous."
+        "Activates the license as soon as the customer completes checkout, rather than waiting for payment to be taken.
+        If payment subsequently fails, canceling the order will cancel the license.
+        This only has an effect with order types that use validation or fulfilment states and payment gateways that are asynchronous."
       ),
       '#default_value' => $this->variation_type->getThirdPartySetting('commerce_license', 'activate_on_place', FALSE),
+    ];
+
+    $our_form['license']['allow_renewal'] = [
+      '#type' => 'checkbox',
+      '#title' => t("Allow renewal before expiration"),
+      '#description' => t(
+        "Allows a customer to renew their license by re-purchasing the product for it."
+      ),
+      '#default_value' => $this->variation_type->getThirdPartySetting('commerce_license', 'allow_renewal', FALSE),
+    ];
+
+    $our_form['license']['allow_renewal_window'] = [
+      '#type' => 'details',
+      '#title' => t("Allow renewal window"),
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          'input#edit-allow-renewal' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $our_form['license']['allow_renewal_window']['interval'] = [
+      '#type' => 'interval',
+      '#title' => t("Allow renewal window"),
+      '#description' => t(
+        "The interval before the license's expiry during which re-purchase is allowed. Prior to this interval, re-purchase is blocked, as normal."
+      ),
+      '#default_value' => [
+        'interval' => $this->variation_type->getThirdPartySetting('commerce_license', 'interval'),
+        'period' => $this->variation_type->getThirdPartySetting('commerce_license', 'period'),
+      ],
     ];
 
     // Insert our form elements into the form after the 'traits' element.
@@ -105,6 +137,13 @@ class ProductVariationTypeFormAlter {
    * Form validation callback.
    *
    * Ensures that everything joins up when a license trait is used.
+   *
+   * @param $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function formValidate($form, FormStateInterface $form_state) {
     $traits = $form_state->getValue('traits');
@@ -123,8 +162,8 @@ class ProductVariationTypeFormAlter {
 
     if (!in_array('commerce_license_order_item_type', $order_item_type->getTraits())) {
       $form_state->setError($form['orderItemType'], t(
-        'The License trait requires an order item type with the order item license trait. ' .
-        'This product variation is set to use the @order-item-type-label order item type. You must either change this, or <a href="@url-edit-order-item-type">edit the order item type</a> to add the license trait.',
+        'The License trait requires an order item type with the order item license trait.
+        This product variation is set to use the @order-item-type-label order item type. You must either change this, or <a href="@url-edit-order-item-type">edit the order item type</a> to add the license trait.',
         [
           '@order-item-type-label' => $order_item_type->label(),
           '@url-edit-order-item-type' => $order_item_type->toUrl('edit-form')->toString(),
@@ -142,11 +181,11 @@ class ProductVariationTypeFormAlter {
       if ($login_pane_configuration['step'] != '_disabled') {
         if ($login_pane_configuration['allow_guest_checkout']) {
           $form_state->setError($form['orderItemType'], t(
-            "The License trait requires a checkout flow that does not allow guest checkout. " .
-            'This product variation is set to use the @order-item-type-label order item type, ' .
-            'which is set to use the @order-type-label order type, ' .
-            'which is set to use the @flow-label checkout flow. ' .
-            'You must either change this, or <a href="@url-checkout-flow">edit the checkout flow</a>.',
+            'The License trait requires a checkout flow that does not allow guest checkout.
+            This product variation is set to use the @order-item-type-label order item type,
+            which is set to use the @order-type-label order type,
+            which is set to use the @flow-label checkout flow.
+            You must either change this, or <a href="@url-checkout-flow">edit the checkout flow</a>.',
             [
               '@order-item-type-label' => $order_item_type->label(),
               '@order-type-label' => $order_type->label(),
@@ -165,18 +204,27 @@ class ProductVariationTypeFormAlter {
    * Saves our third-party settings into the product variation type.
    */
   public function formSubmit($form, FormStateInterface $form_state) {
-    $variation_type = $form_state->getFormObject()->getEntity();
+    $variationType = $form_state->getFormObject()->getEntity();
 
     $value = $form_state->getValue('license_types');
     $license_types = array_filter($value);
-    $variation_type->setThirdPartySetting('commerce_license', 'license_types', $license_types);
+    $variationType->setThirdPartySetting('commerce_license', 'license_types', $license_types);
 
     $activate_on_place = $form_state->getValue('activate_on_place');
-    $variation_type->setThirdPartySetting('commerce_license', 'activate_on_place', $activate_on_place);
+    $variationType->setThirdPartySetting('commerce_license', 'activate_on_place', $activate_on_place);
+
+    $allow_renewal = $form_state->getValue('allow_renewal');
+    $variationType->setThirdPartySetting('commerce_license', 'allow_renewal', $allow_renewal);
+
+    $interval = $form_state->getValue('interval');
+    $variationType->setThirdPartySetting('commerce_license', 'interval', $interval);
+
+    $period = $form_state->getValue('period');
+    $variationType->setThirdPartySetting('commerce_license', 'period', $period);
 
     // This is saving it a second time... but Commerce does the same in its form
     // alterations.
-    $variation_type->save();
+    $variationType->save();
   }
 
 }

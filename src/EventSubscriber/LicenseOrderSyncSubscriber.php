@@ -3,7 +3,6 @@
 namespace Drupal\commerce_license\EventSubscriber;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\commerce_cart\Event\CartEvents;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\state_machine\Event\WorkflowTransitionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,7 +22,7 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
   /**
    * The license storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\commerce_license\LicenseStorage
    */
   protected $licenseStorage;
 
@@ -32,6 +31,9 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager) {
     $this->licenseStorage = $entity_type_manager->getStorage('commerce_license');
@@ -75,6 +77,11 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\state_machine\Event\WorkflowTransitionEvent $event
    *   The event we subscribed to.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function onCartOrderTransition(WorkflowTransitionEvent $event) {
     // Get the states we are leaving and reaching.
@@ -107,6 +114,7 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       if (empty($order_item->license->entity)) {
         // Create a new license. It will be in the 'new' state and so not yet
         // active.
+        /** @var \Drupal\commerce_license\Entity\LicenseInterface $license */
         $license = $this->licenseStorage->createFromOrderItem($order_item);
 
         $license->save();
@@ -118,14 +126,20 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
       }
       else {
         // Get the existing license the order item refers to.
+        /** @var \Drupal\commerce_license\Entity\LicenseInterface $license */
         $license = $order_item->license->entity;
       }
 
-      // Now determine whether to activate it.
+      // Now determine whether to activate or renew it.
       $activate_license = FALSE;
+      $renew_license = FALSE;
       if ($reached_state == 'completed') {
         // Always activate the license when we reach the 'completed' state.
         $activate_license = TRUE;
+
+        if ($license->getState()->value == 'renewal_in_progress') {
+          $renew_license = TRUE;
+        }
       }
       else {
         // Activate the license in the 'place' transition if the product
@@ -146,13 +160,16 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
         continue;
       }
 
-      // Attempt to activate and confirm the license.
-      // TODO: This needs to be expanded for synchronizable licenses.
-      // TODO: how does a license type plugin indicate that it's not able to
-      // activate? And how do we notify the order at this point?
-      $transition = $license->getState()->getWorkflow()->getTransition('activate');
-      $license->getState()->applyTransition($transition);
-      $license->save();
+      // We don't want the activation transition when renewing a license.
+      if (!$renew_license) {
+        // Attempt to activate and confirm the license.
+        // TODO: This needs to be expanded for synchronizable licenses.
+        // TODO: how does a license type plugin indicate that it's not able to
+        // activate? And how do we notify the order at this point?
+        $transition = $license->getState()->getWorkflow()->getTransition('activate');
+        $license->getState()->applyTransition($transition);
+        $license->save();
+      }
 
       $transition = $license->getState()->getWorkflow()->getTransition('confirm');
       $license->getState()->applyTransition($transition);
@@ -165,6 +182,8 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\state_machine\Event\WorkflowTransitionEvent $event
    *   The event we subscribed to.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function onCartOrderCancel(WorkflowTransitionEvent $event) {
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
@@ -174,7 +193,16 @@ class LicenseOrderSyncSubscriber implements EventSubscriberInterface {
 
     foreach ($license_order_items as $order_item) {
       // Get the license from the order item.
+      /** @var \Drupal\commerce_license\Entity\LicenseInterface $license */
       $license = $order_item->license->entity;
+
+      // License is in renewal process. Back to active.
+      if ($license->getState()->value == 'renewal_in_progress') {
+        $transition = $license->getState()->getWorkflow()->getTransition('confirm');
+        $license->getState()->applyTransition($transition);
+        $license->save();
+        continue;
+      }
 
       // Cancel the license.
       $transition = $license->getState()->getWorkflow()->getTransition('cancel');

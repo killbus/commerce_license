@@ -8,6 +8,15 @@ commerce_product.commerce_product_variation_type.*.third_party.commerce_license:
     activate_on_place:
       type: boolean
       label: 'Whether to activate a license when the order is placed'
+    allow_renewal:
+      type: boolean
+      label: 'Allow renewal of license before expiration'
+    interval:
+      type: text
+      label: 'Allow renewal of license within this timeframe of expiration (multiplier)'
+    period:
+      type: text
+      label: 'Allow renewal of license within this timeframe of expiration (period unit)'
 
 views.field.commerce_license__entity_label:
   type: views.field.entity_label

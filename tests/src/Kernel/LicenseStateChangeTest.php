@@ -23,6 +23,7 @@ class LicenseStateChangeTest extends EntityKernelTestBase {
     'commerce',
     'commerce_price',
     'commerce_product',
+    'interval',
     'recurring_period',
     'commerce_license',
     'commerce_license_test',

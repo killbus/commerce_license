@@ -73,6 +73,10 @@ class LicenseExpire extends JobTypeBase implements ContainerFactoryPluginInterfa
       return JobResult::failure('License is no longer active.');
     }
 
+    if ($license->getExpiresTime() > $this->time->getRequestTime()) {
+      return JobResult::failure('License is not expired.');
+    }
+
     try {
       // Set the license to expired. The plugin will take care of revoking it.
       $license->state = 'expired';
